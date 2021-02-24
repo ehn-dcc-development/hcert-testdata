@@ -9,17 +9,16 @@ SCHEMA=		$(SCHEMA_YAML) $(SCHEMA_JSON)
 
 PAYLOAD=	vproof_example.json
 OUTPUT=		test.bin
-VERIFIED=	verified.json
 
 
-CLEANFILES=	$(OUTPUT) $(VERIFIED) $(SCHEMA_JSON)
+CLEANFILES=	$(OUTPUT) $(SCHEMA_JSON)
 
 
 all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
 	python3 vproof.py sign --key $(PRIVATE_KEY) --input $(PAYLOAD) --output $(OUTPUT)
-	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT) --output $(VERIFIED)
+	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT)
 
 $(PRIVATE_KEY):
 	jwkgen --kty EC --crv P-256  > $@

@@ -35,8 +35,9 @@ def read_jwk(filename: str) -> CoseKey:
 
 
 def vproof_sign(private_key: CoseKey, payload: Dict) -> bytes:
+    # TODO: add protected header once bug is squashed
     protected_header = None  # {"alg": "ES256"}
-    unprotected_header = None  # {"kid": private_key.kid.decode()}
+    unprotected_header = {"kid": private_key.kid.decode()}
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
     )
@@ -52,7 +53,6 @@ def vproof_verify(public_key: CoseKey, signed_data: bytes):
         raise RuntimeError("Bad signature")
 
     decoded_payload = cbor2.loads(cose_msg.payload)
-    print("Payload:", json.dumps(decoded_payload))
     return decoded_payload
 
 
@@ -105,27 +105,27 @@ def main():
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
         signed_data = vproof_sign(key, input_data)
-        encoded_data = zlib.compress(signed_data)
+        compressed_data = zlib.compress(signed_data)
 
         print(f"Raw COSE: {len(signed_data)} bytes")
-        print(f"Compressed and encoded COSE: {len(encoded_data)} bytes")
+        print(f"Compressed COSE: {len(compressed_data)} bytes")
 
         if args.output:
             with open(args.output, "wb") as output_file:
-                output_file.write(encoded_data)
+                output_file.write(compressed_data)
         else:
-            print(binascii.hexlify(encoded_data).decode())
+            print("Output:", binascii.hexlify(compressed_data).decode())
 
     elif args.command == "verify":
         with open(args.input, "rb") as input_file:
-            encoded_data = input_file.read()
-        signed_data = zlib.decompress(encoded_data)
+            compressed_data = input_file.read()
+        signed_data = zlib.decompress(compressed_data)
         payload = vproof_verify(key, signed_data)
         if args.output:
             with open(args.output, "wt") as output_file:
                 json.dump(payload, output_file, indent=4)
         else:
-            print(json.dumps(payload, indent=4))
+            print("Verified payload:", json.dumps(payload, indent=4))
 
 
 if __name__ == "__main__":
