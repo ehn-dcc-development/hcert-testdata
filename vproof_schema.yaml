@@ -1,0 +1,109 @@
+$schema: http://json-schema.org/schema#
+
+type: object
+required:
+  - sub
+  - vac
+properties:
+  sub:
+    description: Subject
+    type: object
+    required:
+      - n
+    properties:
+      n:
+        title: Person name
+        description: The legal name of the vaccinated person
+        type: string
+        example: Tolvan Tolvansson
+      id:
+        title: Person identifiers
+        description: Identifiers of the vaccinated person, according to
+          the policies applicable in each country.
+        type: array
+        items:
+          type: object
+          required:
+            - t
+            - i
+          properties:
+            t:
+              title: Identifier type
+              description: The type of identifier
+                pin = personal identity number
+                pas = passport number
+                nid = national identity card number
+              example: pin
+              enum:
+                - pin
+                - pas
+                - nid
+              type: string
+            i:
+              title: Identfier number or string
+              type: string
+              example: 121212-1212
+      dob:
+        title: Date of birth
+        description: Mandatory if no Person identifier is provided.
+        format: date
+  vac:
+    description: Vaccination/prophylaxis information
+    type: array
+    items:
+      type: object
+      required:
+        - des
+        - nam
+        - aut
+        - seq
+        - tot
+        - dat
+        - adm
+      properties:
+        tar:
+          title: Disease target
+          description: Disease or agent that the vaccination provides protection.
+            against.
+          type: string
+          example: SARS-CoV-2
+        des:
+          title: Vaccine/prophylaxis
+          description: Generic description of the vaccine/prophylaxis or its
+            component(s).
+          type: string
+          example: J07BX03
+        nam:
+          title: Medicinal product name
+          description: Name of the medicinal product as registered in the country.
+          type: string
+          example: COMIRNATY
+        aut:
+          title: Marketing Authorisation Holder
+          description: EMA's Organisations System data (SPOR).
+          type: string
+          example: Pfizer BioNTech
+        seq:
+          title: Dose sequence number
+          description: The sequence number of this dose in the series of
+            vaccinations.
+          example: 1
+        tot:
+          title: Total number of doses
+          description: Total number of doses in this series of vaccinations.
+          example: 2
+        lot:
+          title: Batch/lot number
+          description: A distinctive combination of numbers and/or letters which
+            specifically identifies a batch.
+        dat:
+          title: Date of vaccination
+          description: The date of the vaccination event
+          format: date
+          example: "2021-02-20"
+        adm:
+          title: Administering centre
+          description: Name/code of administering centre or a health authority
+            responsible for the vaccination event
+          format: string
+          example: Region Halland
