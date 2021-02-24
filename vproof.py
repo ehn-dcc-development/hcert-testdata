@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import base64
 import binascii
 import json
 import zlib
@@ -33,14 +32,6 @@ def read_jwk(filename: str) -> CoseKey:
         y=b64d(jwk_dict["y"].encode()),
         d=b64d(jwk_dict["d"].encode()) if "d" in jwk_dict else None,
     )
-
-
-def vproof_encode(data: bytes) -> str:
-    return base64.b64encode(zlib.compress(data)).decode()
-
-
-def vproof_decode(data: str) -> bytes:
-    return zlib.decompress(base64.b64decode(data))
 
 
 def vproof_sign(private_key: CoseKey, payload: Dict) -> bytes:
@@ -85,13 +76,13 @@ def main():
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
         signed_data = vproof_sign(key, input_data)
-        encoded_data = vproof_encode(signed_data)
+        encoded_data = zlib.compress(signed_data)
 
         print(f"Raw COSE: {len(signed_data)} bytes")
         print(f"Compressed and encoded COSE: {len(encoded_data)} bytes")
 
         if args.output:
-            with open(args.output, "wt") as output_file:
+            with open(args.output, "wb") as output_file:
                 output_file.write(encoded_data)
         else:
             print(encoded_data)
@@ -99,7 +90,7 @@ def main():
     elif args.command == "verify":
         with open(args.input, "rb") as input_file:
             encoded_data = input_file.read()
-        signed_data = vproof_decode(encoded_data)
+        signed_data = zlib.decompress(encoded_data)
         payload = vproof_verify(key, signed_data)
         if args.output:
             with open(args.output, "wt") as output_file:
