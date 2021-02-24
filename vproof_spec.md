@@ -3,7 +3,7 @@ Electronic Vaccination Proof specification version 0.1.0, 2021-02-24.
 
 # Abstract
 
-This document specifies a data structure and encoding mechanisms for vaccination passes to be used cross-border. It also specifies a transport encoding mechanism in a machine-readable optical format (Aztec), which can be displayed on the screen of a mobile device or printed on paper.
+This document specifies a data structure and encoding mechanisms for vaccination proofs to be used cross-border. It also specifies a transport encoding mechanism in a machine-readable optical format (Aztec), which can be displayed on the screen of a mobile device or printed on a piece of paper.
 
 
 # Terminology
@@ -28,12 +28,12 @@ In the EVP, The *major* and *minor* versions are indicated in the Issuer Protect
 
 # Electronic Vaccination Proof
 
-The Electronic Vaccination Proof (EVP) is designed to provide a uniform and standardised vehicle for vaccination passes from different Issuers. The aim is to harmonise how vaccination passes are represented, encoded and signed with the goal of facilitating interoperability, while protecting the holders personal integrity and minimise costs in implementation.
+The Electronic Vaccination Proof (EVP) is designed to provide a uniform and standardised vehicle for vaccination proofs from different Issuers. The aim is to harmonise how vaccination passes are represented, encoded and signed with the goal of facilitating interoperability, while protecting the holders personal integrity and minimise costs in implementation.
 
 
 ## Coordinated Data Structure
 
-Ability to read and interpret EVPs issued by any Issuer required a common data structure and agreements of the significance of each attribute. To facilitate such interoperability, a common coordinated data structure is defined through the use of a JSON schema, Appendix A. Critical elements of a vaccination pass SHOULD use this data structure. A Participant MAY extend the objects with proprietary data. The naming of such objects MUST be agreed between all Participants.
+Ability to read and interpret EVPs issued by any Issuer requires a common data structure and agreements of the significance of each data field. To facilitate such interoperability, a common coordinated data structure is defined through the use of a JSON schema, Appendix A. Critical elements of a vaccination pass SHOULD use this data structure. A Participant MAY extend the objects with proprietary data. The naming of such objects MUST be agreed between all Participants.
 
 
 ## Structure of the Electronic Vaccination Proof
@@ -49,7 +49,7 @@ The Issuer Signature is used for integrity protection and data origin authentica
 
 ## Payload
 
-The Payload is a JSON (RFC 7159) object containing the vaccination pass information, encoding and serialised using CBOR as defined in (RFC7049). 
+The Payload is a JSON (RFC 7159) object containing the vaccination pass information, encoded and serialised using CBOR as defined in (RFC7049). 
 
 Strings SHOULD be NFC normalised according to the Unicode standard. Decoding applications SHOULD however be permissive and robust in these aspects, and acceptance of any reasonable type conversion is strongly encouraged. If unnormalised data is found during decoding, or in subsequent comparison function, implementations SHOULD behave as if the input is normalised to NFC.
 
@@ -75,8 +75,7 @@ The Issuer Identifier (**iid**) parameter holds the identifier of the entity iss
 
 ### Issuer Key Identifier
 
-The Issuer Key Identifier (**kid**) parameter is used by Verifiers for selecting the correct public key from a list of keys pertaining to the Issuer specified by the Issuer Identifier. Several keys may be used in parallel for administrative reasons and when performing key rollovers.
-Key Identifiers are selected by the responsible Issuer and is REQUIRED to be unique per Issuer.
+The Issuer Key Identifier (**kid**) parameter is used by Verifiers for selecting the correct public key from a list of keys pertaining to the Issuer specified by the Issuer Identifier. Several keys may be used in parallel for administrative reasons and when performing key rollovers. Key Identifiers are selected by the responsible Issuer and is REQUIRED to be unique per Issuer.
 
 
 ### Issuer Signature Expiry
@@ -86,12 +85,12 @@ The Issuer Signature Expiry (**exp**) timestamp is used to indicate for how long
 
 ### EVP Specification Version
 
-The EVP Specification Version (**ver**) indicates to which version of this specification the Payload adheres. The version numbers are encoded as a string using the *major.minor* format, where the major number and minor number are separated by decimal dots. 
+The EVP Specification Version (**ver**) indicates to which version of this specification the Payload adheres. The version numbers are encoded as a string using the *major.minor* format, where the major number and minor number are separated by a decimal dot. 
 
 
 ## Issuer Signature
 
-For the Issuer Signature, one primary and one fallback algorithm SHOULD be defined. The fallback algorithm is only used in the unlikely event the cryptographic strength of the primary algorithm becomes insufficient in providing reliable data integrity protection and origin authentication among the Participants. However, it is essential and of utmost importance for the security of the system that all implementations incorporates the fallback algorithm. For this reason, both the primary and the fallback algorithm MUST be implemented.
+For the Issuer Signature, one primary and one fallback algorithm is defined. The fallback algorithm is only used in the unlikely event the cryptographic strength of the primary algorithm becomes insufficient in providing reliable data integrity protection and origin authentication among the Participants. However, it is essential and of utmost importance for the security of the system that all implementations incorporates the fallback algorithm. For this reason, both the primary and the fallback algorithm MUST be implemented.
 
 - **Primary Algorithm** The primary algorithm is Elliptic Curve Digital Signature Algorithm (ECDSA) as defined in (ISO/IEC 14888-3:2006) section 2.3, using the P-256 parameters as defined in appendix D (D.1.2.3) of (FIPS PUB 186-4) in combination the SHA-256 hash algorithm as defined in (ISO/IEC 10118-3:2004) function 4.
 
@@ -119,20 +118,20 @@ If the transfer of the EVP from the Issuer to the holder is based on a presentat
 ## AZTEC 2D Barcode
 
 To optically represent the EVP using a compact machine-readable format the Aztec 2D Barcode (ISO/IEC 24778:2008) SHALL be used. 
-When generating the optical code an error correction rate of 23% is RECOMMENDED. The optical code is RECOMMENDED to be rendered on the presentation media with a diagonal size between 35 mm and 75 mm. 
+When generating the optical code an error correction rate of 23% is RECOMMENDED. The optical code is RECOMMENDED to be rendered on the presentation media with a diagonal size between 35 mm and 65 mm. 
 
 
 # Security Considerations
 
-When designing a scheme using this specification, several important security aspects must be considered. These can not preemptively be accounted for in this specification, but must be identified, categorised and analysed and monitored by the Participants.
+When designing a scheme using this specification, several important security aspects must be considered. These can not preemptively be accounted for in this specification, but must be identified, analysed and monitored by the Participants.
 
 As input to the continuous analysis and monitoring of risks, the following topics SHOULD be taken into account:
 
 ## EVP Validity Time
 
-It is anticipated that EVPs can not reliably revoked once issued, especially not if this specification would be used on a global scale. Mainly for this reason, this specification requires the Issuer of an EVP to limit the EVP's validity period by specifying an expiry time. This requires to holder of an EVP to renew the EVP on some regular basis. 
+It is anticipated that EVPs can not be reliably revoked once issued, especially not if this specification would be used on a global scale. Mainly for this reason, this specification requires the Issuer of an EVP to limit the EVP's validity period by specifying an expiry time. This requires to holder of an EVP to renew the EVP on some regular basis. 
 
-The acceptable validity period would be determined by practical constraints, a traveller may not have the possibility to renew the EVP during a travel overseas. But it may also be that an Issuer of EVP's are having a security compromise of some sort, which requires the Issuer to withdraw an Issuer Key (invalidating all EVP's signed using that key). The consequences of such an event may be limited by regularly rolling Issuer keys and requiring renewal of all EVP's, on some reasonable interval.
+The acceptable validity period would be determined by practical constraints, a traveller may not have the possibility to renew the EVP during a travel overseas. But it may also be that an Issuer of EVP's are considering the possibility of a security compromise of some sort, which requires the Issuer to withdraw an Issuer Key (invalidating all EVPs signed using that key). The consequences of such an event may be limited by regularly rolling Issuer keys and requiring renewal of all EVPs, on some reasonable interval.
 
 
 ## Key management
@@ -148,7 +147,7 @@ The confidentiality of cryptographic keys can be compromised in a number differe
 
 To mitigate against the risks that the signing algorithm is found to be weak, allowing the private keys to be compromised through cryptanalysis, this specification recommends all Participants to implement a fallback signature algorithm based on different parameters or a different mathematical problem than the primary.
 
-The other risks mentioned here are related to the Issuers' operating environments. One effective control to mitigate significant parts of these risks are to generate, store and use the private keys in Hardware Security Modules (HSMs). Use of HSMs for signing EVPs is highly encouraged.
+The other risks mentioned here are related to the Issuers' operating environments. One effective control to mitigate significant parts of these risks is to generate, store and use the private keys in Hardware Security Modules (HSMs). Use of HSMs for signing EVPs is highly encouraged.
 
 However, regardless if an Issuer decides to use HSMs or not, a key roll-over schedule SHOULD be established where the frequency of the key roll-overs are proportionate to the exposure of keys to external networks, other systems and personnel. A well-chosen roll-over schedule also limits the risks associated with erroneously issued EVPs, enabling an Issuer to revoke such EVPs in batches, by withdrawing a key, if required.
 
@@ -161,7 +160,7 @@ This specification may be used in a way which implies receiving data from untrus
 
 # Appendix A
 
-([vproof_schema]https://raw.githubusercontent.com/kirei/vproof/main/vproof_schema.yaml)
+([vproof_schema]https://raw.githubusercontent.com/kirei/vproof/main/vproof_schema.yaml))
 
 _________________
 
