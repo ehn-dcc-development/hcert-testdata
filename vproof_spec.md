@@ -160,7 +160,7 @@ This specification may be used in a way which implies receiving data from untrus
 
 # Appendix A
 
-([vproof_schema]https://raw.githubusercontent.com/kirei/vproof/main/vproof_schema.yaml))
+([vproof_schema](https://raw.githubusercontent.com/kirei/vproof/main/vproof_schema.yaml))
 
 _________________
 
