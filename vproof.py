@@ -60,13 +60,42 @@ def main():
     """ Main function"""
 
     parser = argparse.ArgumentParser(description="Vaccin Proof Signer")
-    parser.add_argument("--key", metavar="filename", required=True)
-    parser.add_argument("--input", metavar="filename", required=True)
-    parser.add_argument("--output", metavar="filename", required=False)
 
     subparsers = parser.add_subparsers(dest="command", required=True)
-    parser_sign = subparsers.add_parser("sign", help="Sign input data")
-    parser_verify = subparsers.add_parser("verify", help="Verify signed data")
+
+    parser_sign = subparsers.add_parser("sign", help="Sign proof")
+    parser_sign.add_argument(
+        "--key", metavar="filename", help="Private JWK filename", required=True
+    )
+    parser_sign.add_argument(
+        "--input",
+        metavar="filename",
+        help="JSON-encoded proof payload",
+        required=True,
+    )
+    parser_sign.add_argument(
+        "--output",
+        metavar="filename",
+        help="Compressed CBOR output",
+        required=False,
+    )
+
+    parser_verify = subparsers.add_parser("verify", help="Verify signed proof")
+    parser_verify.add_argument(
+        "--key", metavar="filename", help="Public JWK filename", required=True
+    )
+    parser_verify.add_argument(
+        "--input",
+        metavar="filename",
+        help="Compressed CBOR input",
+        required=True,
+    )
+    parser_verify.add_argument(
+        "--output",
+        metavar="filename",
+        help="JSON-encoded proof payload",
+        required=False,
+    )
 
     args = parser.parse_args()
 
