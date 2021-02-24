@@ -114,7 +114,7 @@ def main():
             with open(args.output, "wb") as output_file:
                 output_file.write(encoded_data)
         else:
-            print(encoded_data)
+            print(binascii.hexlify(encoded_data).decode())
 
     elif args.command == "verify":
         with open(args.input, "rb") as input_file:

@@ -18,8 +18,8 @@ CLEANFILES=	$(OUTPUT) $(VERIFIED) $(SCHEMA_JSON)
 all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
-	python3 vproof.py --key $(PRIVATE_KEY) --input $(PAYLOAD) --output $(OUTPUT) sign
-	python3 vproof.py --key $(PUBLIC_KEY) --input $(OUTPUT) --output $(VERIFIED) verify
+	python3 vproof.py sign --key $(PRIVATE_KEY) --input $(PAYLOAD) --output $(OUTPUT)
+	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT) --output $(VERIFIED)
 
 $(PRIVATE_KEY):
 	jwkgen --kty EC --crv P-256  > $@
