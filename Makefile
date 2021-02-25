@@ -4,6 +4,8 @@ PUBLIC_KEY=	public_key.json
 SCHEMA_YAML=	vproof_schema.yaml
 SCHEMA_JSON=	vproof_schema.json
 
+ISSUER=		xyzzy
+
 KEYS=		$(PRIVATE_KEY) $(PUBLIC_KEY)
 SCHEMA=		$(SCHEMA_YAML) $(SCHEMA_JSON)
 
@@ -17,7 +19,7 @@ CLEANFILES=	$(OUTPUT) $(SCHEMA_JSON)
 all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
-	python3 vproof.py sign --key $(PRIVATE_KEY) --input $(PAYLOAD) --output $(OUTPUT)
+	python3 vproof.py sign --issuer xyzzy --key $(PRIVATE_KEY) --input $(PAYLOAD) --output $(OUTPUT)
 	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT)
 
 $(PRIVATE_KEY):

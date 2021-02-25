@@ -3,8 +3,9 @@
 import argparse
 import binascii
 import json
+import time
 import zlib
-from typing import Dict
+from typing import Dict, Optional
 
 import cbor2
 from cose import EC2, CoseAlgorithms, CoseEllipticCurves, CoseMessage
@@ -34,9 +35,15 @@ def read_jwk(filename: str) -> CoseKey:
     )
 
 
-def vproof_sign(private_key: CoseKey, payload: Dict) -> bytes:
-    # TODO: add protected header once bug is squashed
-    protected_header = None  # {"alg": "ES256"}
+def vproof_sign(
+    private_key: CoseKey, payload: Dict, issuer: Optional[str] = None
+) -> bytes:
+    protected_header = {"alg": "ES256", "iat": int(time.time())}
+    if issuer:
+        protected_header["issuer"] = issuer
+    # TODO: add protected header back once bug is squashed
+    print("Protected header:", protected_header)
+    protected_header = None
     unprotected_header = {"kid": private_key.kid.decode()}
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
@@ -66,6 +73,12 @@ def main():
     parser_sign = subparsers.add_parser("sign", help="Sign proof")
     parser_sign.add_argument(
         "--key", metavar="filename", help="Private JWK filename", required=True
+    )
+    parser_sign.add_argument(
+        "--issuer",
+        metavar="id",
+        help="Proof issuer",
+        required=False,
     )
     parser_sign.add_argument(
         "--input",
@@ -104,7 +117,9 @@ def main():
     if args.command == "sign":
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
-        signed_data = vproof_sign(key, input_data)
+        signed_data = vproof_sign(
+            private_key=key, issuer=args.issuer, payload=input_data
+        )
         compressed_data = zlib.compress(signed_data)
 
         print(f"Raw COSE: {len(signed_data)} bytes")
@@ -120,7 +135,7 @@ def main():
         with open(args.input, "rb") as input_file:
             compressed_data = input_file.read()
         signed_data = zlib.decompress(compressed_data)
-        payload = vproof_verify(key, signed_data)
+        payload = vproof_verify(public_key=key, signed_data=signed_data)
         if args.output:
             with open(args.output, "wt") as output_file:
                 json.dump(payload, output_file, indent=4)
