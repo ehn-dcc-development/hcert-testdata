@@ -19,7 +19,7 @@ CLEANFILES=	$(OUTPUT) $(SCHEMA_JSON)
 all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
-	python3 vproof.py sign --issuer xyzzy --key $(PRIVATE_KEY) --input $(PAYLOAD) --output $(OUTPUT)
+	python3 vproof.py sign --issuer xyzzy --ttl 3600 --key $(PRIVATE_KEY) --input $(PAYLOAD) --output $(OUTPUT)
 	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT)
 
 $(PRIVATE_KEY):

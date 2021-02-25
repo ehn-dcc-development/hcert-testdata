@@ -38,12 +38,12 @@ def read_jwk(filename: str) -> CoseKey:
 
 
 def vproof_sign(
-    private_key: CoseKey, payload: Dict, issuer: Optional[str] = None
+    private_key: CoseKey, payload: Dict, issuer: Optional[str] = None, ttl: int = 0
 ) -> bytes:
     protected_header = {
         "kid": private_key.kid.decode(),
         "alg": SIGN_ALG,
-        "iat": int(time.time()),
+        "exp": int(time.time()) + ttl,
     }
     if issuer:
         protected_header["iss"] = issuer
@@ -87,6 +87,14 @@ def main():
         required=False,
     )
     parser_sign.add_argument(
+        "--ttl",
+        metavar="seconds",
+        help="Signature TTL",
+        type=int,
+        default=0,
+        required=False,
+    )
+    parser_sign.add_argument(
         "--input",
         metavar="filename",
         help="JSON-encoded proof payload",
@@ -124,7 +132,7 @@ def main():
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
         signed_data = vproof_sign(
-            private_key=key, issuer=args.issuer, payload=input_data
+            private_key=key, issuer=args.issuer, ttl=args.ttl, payload=input_data
         )
         compressed_data = zlib.compress(signed_data)
 
