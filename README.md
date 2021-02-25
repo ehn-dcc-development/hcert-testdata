@@ -1,3 +1,5 @@
+[![CC BY 4.0][cc-by-shield]][cc-by]
+
 # Vaccination Proof
 
 This repository contains a proposal for encoding and signing proof of vaccination, as a candidate to be adapted and adopted by eHealth authorities as they seem fit.
@@ -23,21 +25,19 @@ Vaccination proofs are encoded as CBOR ([RFC7049](https://tools.ietf.org/html/rf
 
 # Presentation
 
-A short presentation on the background of this initative is available ([here](vproof-preso.pdf)).
+[A short presentation on the background of this initative is available](vproof-preso.pdf)).
 
 
 # Specification
 
-A draft specification is available ([here](vproof_spec.md)).
+[A draft specification is available](vproof_spec.md).
 
 
 # Contributions
 
-Contributions are very welcome. Please file a pull request.
+Contributions are very welcome - please file a pull request.
 
 _________________
-
-Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
 
 This work is licensed under a
 [Creative Commons Attribution 4.0 International License][cc-by].
