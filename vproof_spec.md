@@ -28,7 +28,7 @@ In the EVP, The *major* and *minor* versions are indicated in the Issuer Protect
 
 # Electronic Vaccination Proof
 
-The Electronic Vaccination Proof (EVP) is designed to provide a uniform and standardised vehicle for vaccination proofs from different Issuers. The aim is to harmonise how vaccination passes are represented, encoded and signed with the goal of facilitating interoperability, while protecting the holders personal integrity and minimise costs in implementation.
+The Electronic Vaccination Proof (EVP) is designed to provide a uniform and standardised vehicle for vaccination proofs from different Issuers. The aim is to harmonise how vaccination passes are represented, encoded and signed with the goal of facilitating interoperability, while protecting the holder's personal integrity and minimise costs in implementation.
 
 
 ## Coordinated Data Structure
@@ -90,7 +90,7 @@ The EVP Specification Version (**ver**) indicates to which version of this speci
 
 ## Issuer Signature
 
-For the Issuer Signature, one primary and one fallback algorithm is defined. The fallback algorithm is only used in the unlikely event the cryptographic strength of the primary algorithm becomes insufficient in providing reliable data integrity protection and origin authentication among the Participants. However, it is essential and of utmost importance for the security of the system that all implementations incorporates the fallback algorithm. For this reason, both the primary and the fallback algorithm MUST be implemented.
+For the Issuer Signature, one primary and one fallback algorithm is defined. The fallback algorithm is only used in the unlikely event the cryptographic strength of the primary algorithm becomes insufficient in providing reliable data integrity protection and origin authentication among the Participants. However, it is essential and of utmost importance for the security of the system that all implementations incorporate the fallback algorithm. For this reason, both the primary and the fallback algorithm MUST be implemented.
 
 - **Primary Algorithm** The primary algorithm is Elliptic Curve Digital Signature Algorithm (ECDSA) as defined in (ISO/IEC 14888-3:2006) section 2.3, using the P-256 parameters as defined in appendix D (D.1.2.3) of (FIPS PUB 186-4) in combination the SHA-256 hash algorithm as defined in (ISO/IEC 10118-3:2004) function 4.
 
@@ -138,7 +138,7 @@ The acceptable validity period would be determined by practical constraints, a t
 
 This specification relies heavily on strong cryptographic mechanisms to secure data integrity and data origin authentication. Maintaining the confidentiality of the private encryption keys are therefor of utmost importance.
 
-The confidentiality of cryptographic keys can be compromised in a number different ways, for instance;
+The confidentiality of cryptographic keys can be compromised in a number of different ways, for instance;
 
 - The key generation process may be flawed, resulting in weak keys.
 - The keys may be exposed by human error.
@@ -149,7 +149,7 @@ To mitigate against the risks that the signing algorithm is found to be weak, al
 
 The other risks mentioned here are related to the Issuers' operating environments. One effective control to mitigate significant parts of these risks is to generate, store and use the private keys in Hardware Security Modules (HSMs). Use of HSMs for signing EVPs is highly encouraged.
 
-However, regardless if an Issuer decides to use HSMs or not, a key roll-over schedule SHOULD be established where the frequency of the key roll-overs are proportionate to the exposure of keys to external networks, other systems and personnel. A well-chosen roll-over schedule also limits the risks associated with erroneously issued EVPs, enabling an Issuer to revoke such EVPs in batches, by withdrawing a key, if required.
+However, regardless if an Issuer decides to use HSMs or not, a key roll-over schedule SHOULD be established where the frequency of the key roll-overs is proportionate to the exposure of keys to external networks, other systems and personnel. A well-chosen roll-over schedule also limits the risks associated with erroneously issued EVPs, enabling an Issuer to revoke such EVPs in batches, by withdrawing a key, if required.
 
 
 ## Input data validation
