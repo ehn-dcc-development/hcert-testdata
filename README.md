@@ -19,16 +19,16 @@ Vaccination proofs are encoded as CBOR ([RFC7049](https://tools.ietf.org/html/rf
 
 ## Overview
 
-![overview](https://github.com/kirei/vproof/raw/main/vproof_overview.png)
+![overview](vproof_overview.png)
 
 # Presentation
 
-A short presentation on the background of this initative is available ([here](https://github.com/kirei/vproof/blob/main/vproof-preso.pdf)).
+A short presentation on the background of this initative is available ([here](vproof-preso.pdf)).
 
 
 # Specification
 
-A draft specification is available ([here](https://github.com/kirei/vproof/blob/main/vproof_spec.md)).
+A draft specification is available ([here](vproof_spec.md)).
 
 
 # Contributions
