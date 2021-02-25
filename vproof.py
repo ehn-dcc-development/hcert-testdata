@@ -13,6 +13,8 @@ from cose.keys.cosekey import CoseKey
 from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
 
+SIGN_ALG = "ES256"
+
 
 def read_jwk(filename: str) -> CoseKey:
 
@@ -38,13 +40,17 @@ def read_jwk(filename: str) -> CoseKey:
 def vproof_sign(
     private_key: CoseKey, payload: Dict, issuer: Optional[str] = None
 ) -> bytes:
-    protected_header = {"alg": "ES256", "iat": int(time.time())}
+    protected_header = {
+        "kid": private_key.kid.decode(),
+        "alg": SIGN_ALG,
+        "iat": int(time.time()),
+    }
     if issuer:
         protected_header["issuer"] = issuer
     # TODO: add protected header back once bug is squashed
     print("Protected header:", protected_header)
     protected_header = None
-    unprotected_header = {"kid": private_key.kid.decode()}
+    unprotected_header = None
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
     )
