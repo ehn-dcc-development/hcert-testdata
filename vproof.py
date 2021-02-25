@@ -46,7 +46,7 @@ def vproof_sign(
         "iat": int(time.time()),
     }
     if issuer:
-        protected_header["issuer"] = issuer
+        protected_header["iss"] = issuer
     # TODO: add protected header back once bug is squashed
     print("Protected header:", protected_header)
     protected_header = None
