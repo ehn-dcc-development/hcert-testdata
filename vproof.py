@@ -9,14 +9,15 @@ from typing import Dict, Optional
 
 import cbor2
 from cose import EC2, CoseAlgorithms, CoseEllipticCurves, CoseMessage
-from cose.keys.cosekey import CoseKey
+from cose.attributes.headers import CoseHeaderKeys
+from cose.keys.cosekey import CoseKey, KeyOps
 from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
 
-SIGN_ALG = "ES256"
+SIGN_ALG = CoseAlgorithms.ES256
 
 
-def read_jwk(filename: str) -> CoseKey:
+def read_jwk(filename: str, private: bool = True) -> CoseKey:
 
     with open(filename, "rt") as jwk_file:
         jwk_dict = json.load(jwk_file)
@@ -29,7 +30,8 @@ def read_jwk(filename: str) -> CoseKey:
 
     return EC2(
         kid=jwk_dict["kid"].encode(),
-        alg=CoseAlgorithms.ES256,
+        key_ops=KeyOps.SIGN if private else KeyOps.VERIFY,
+        alg=SIGN_ALG,
         crv=CoseEllipticCurves.P_256,
         x=b64d(jwk_dict["x"].encode()),
         y=b64d(jwk_dict["y"].encode()),
@@ -38,19 +40,18 @@ def read_jwk(filename: str) -> CoseKey:
 
 
 def vproof_sign(
-    private_key: CoseKey, payload: Dict, issuer: Optional[str] = None, ttl: int = 0
+    private_key: CoseKey,
+    alg: CoseAlgorithms,
+    payload: Dict,
 ) -> bytes:
     protected_header = {
-        "kid": private_key.kid.decode(),
-        "alg": SIGN_ALG,
-        "exp": int(time.time()) + ttl,
+        CoseHeaderKeys.ALG: alg.id,
     }
-    if issuer:
-        protected_header["iss"] = issuer
-    # TODO: add protected header back once bug is squashed
+    unprotected_header = {
+        CoseHeaderKeys.KID: private_key.kid.decode(),
+    }
     print("Protected header:", protected_header)
-    protected_header = None
-    unprotected_header = None
+    print("Unprotected header:", unprotected_header)
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
     )
@@ -79,20 +80,6 @@ def main():
     parser_sign = subparsers.add_parser("sign", help="Sign proof")
     parser_sign.add_argument(
         "--key", metavar="filename", help="Private JWK filename", required=True
-    )
-    parser_sign.add_argument(
-        "--issuer",
-        metavar="id",
-        help="Proof issuer",
-        required=False,
-    )
-    parser_sign.add_argument(
-        "--ttl",
-        metavar="seconds",
-        help="Signature TTL",
-        type=int,
-        default=0,
-        required=False,
     )
     parser_sign.add_argument(
         "--input",
@@ -126,13 +113,14 @@ def main():
 
     args = parser.parse_args()
 
-    key = read_jwk(args.key)
-
     if args.command == "sign":
+        key = read_jwk(args.key, private=True)
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
         signed_data = vproof_sign(
-            private_key=key, issuer=args.issuer, ttl=args.ttl, payload=input_data
+            private_key=key,
+            alg=SIGN_ALG,
+            payload=input_data,
         )
         compressed_data = zlib.compress(signed_data)
 
@@ -146,6 +134,7 @@ def main():
             print("Output:", binascii.hexlify(compressed_data).decode())
 
     elif args.command == "verify":
+        key = read_jwk(args.key, private=False)
         with open(args.input, "rb") as input_file:
             compressed_data = input_file.read()
         signed_data = zlib.decompress(compressed_data)
