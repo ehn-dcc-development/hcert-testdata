@@ -60,17 +60,19 @@ The integrity and authenticity of origin of data contained both within the Paylo
 
 An Issuer Protected Header object that provides the required metadata for the signature SHALL be attached to the Payload as defined by the COSE specification. The Issuer Signature Protected Header SHALL include the following parameters:
 
-- **iid**: Issuer Identifier (string)
-- **kid**: Issuer Key identifier (string)
-- **exp**: Issuer Signature Expiry (timestamp in ISO 8601 basic format, string)
-- **ver**: EVP Specification version (string)
+- **iid**: Issuer Identifier (bstr)
+- **kid**: Issuer Key identifier (bstr)
+- **exp**: Issuer Signature Expiry (timestamp in ISO 8601 basic format, bstr)
+- **ver**: EVP Specification version (bstr)
 
 The Verifier SHALL validate the Issuer Signature before any further processing of any of the information of the Payload.
+
+(NOTE: In this draft, all but the kid parameter are using private COSE header parameter labels)
 
 
 ### Issuer Identifier
 
-The Issuer Identifier (**iid**) parameter holds the identifier of the entity issuing the EVP. The namespace of the Issuer Identifiers MUST be agreed between the Participants, but is not defined in the specification.
+The Issuer Identifier (**iid**) parameter holds the identifier of the entity issuing the EVP. The namespace of the Issuer Identifiers MUST be agreed between the Participants, but is not defined in the specification. The **iid** SHALL be encoded using COSE header parameter label -100000 (decimal).
 
 
 ### Issuer Key Identifier
@@ -80,13 +82,12 @@ The Issuer Key Identifier (**kid**) parameter is used by Verifiers for selecting
 
 ### Issuer Signature Expiry
 
-The Issuer Signature Expiry (**exp**) timestamp is used to indicate for how long this particular signature over the Payload SHALL be considered valid, after which a Verifier MUST reject the Payload as expired. The timestamp MUST be given in UTC. The purpose of the expiry parameter is to force a limit of the validity period of the EVP.
+The Issuer Signature Expiry (**exp**) timestamp is used to indicate for how long this particular signature over the Payload SHALL be considered valid, after which a Verifier MUST reject the Payload as expired. The timestamp MUST be given in UTC. The purpose of the expiry parameter is to force a limit of the validity period of the EVP. The **exp** SHALL be encoded using COSE header parameter label -100001 (decimal).
 
 
 ### EVP Specification Version
 
-The EVP Specification Version (**ver**) indicates to which version of this specification the Payload adheres. The version numbers are encoded as a string using the *major.minor* format, where the major number and minor number are separated by a decimal dot. 
-
+The EVP Specification Version (**ver**) indicates to which version of this specification the Payload adheres. The version numbers are encoded as a string using the *major.minor* format, where the major number and minor number are separated by a decimal dot. The **evp** SHALL be encoded using COSE header parameter label -100002 (decimal).
 
 ## Issuer Signature
 
