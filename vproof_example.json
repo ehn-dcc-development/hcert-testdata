@@ -1,6 +1,4 @@
 {
-	"iss": "https://folkhalsomyndigheten.se",
-	"exp": "1984-01-01T00:00:00Z",
 	"sub": {
 		"n": "Tolvan Tolvansson",
 		"id": [

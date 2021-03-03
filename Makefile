@@ -12,6 +12,9 @@ SCHEMA=		$(SCHEMA_YAML) $(SCHEMA_JSON)
 PAYLOAD=	vproof_example.json
 OUTPUT=		test.bin
 
+ISSUER=		"https://folkhalsomyndigheten.se"
+KID=		test2021
+TTL=		3600
 
 CLEANFILES=	$(OUTPUT) $(SCHEMA_JSON)
 
@@ -20,7 +23,7 @@ all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
 	python3 schemacheck.py --input vproof_example.json vproof_schema.yaml
-	python3 vproof.py sign --key $(PRIVATE_KEY) --kid 42  --input $(PAYLOAD) --output $(OUTPUT)
+	python3 vproof.py sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT)
 	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT)
 
 $(PRIVATE_KEY):

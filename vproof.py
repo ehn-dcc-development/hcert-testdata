@@ -5,6 +5,8 @@ import binascii
 import json
 import time
 import zlib
+from datetime import datetime
+from enum import Enum
 from typing import Dict, Optional
 
 import cbor2
@@ -16,6 +18,12 @@ from cryptojwt.utils import b64d
 
 SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
+
+
+class PrivateCoseHeaderKeys(Enum):
+    EXP = -65537
+    IAT = -65538
+    ISS = -65539
 
 
 def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> CoseKey:
@@ -44,12 +52,20 @@ def vproof_sign(
     private_key: CoseKey,
     alg: CoseAlgorithms,
     payload: Dict,
+    issuer: Optional[str] = None,
+    ttl: Optional[int] = None,
 ) -> bytes:
+    now = int(time.time())
     protected_header = {
         CoseHeaderKeys.ALG: alg.id,
         CoseHeaderKeys.KID: private_key.kid.decode(),
         CoseHeaderKeys.CONTENT_TYPE: CONTENT_TYPE_CBOR,
+        PrivateCoseHeaderKeys.IAT.value: now,
     }
+    if ttl:
+        protected_header[PrivateCoseHeaderKeys.EXP.value] = int(now + ttl)
+    if issuer:
+        protected_header[PrivateCoseHeaderKeys.ISS.value] = issuer
     unprotected_header = {}
     print("Protected header:", protected_header)
     print("Unprotected header:", unprotected_header)
@@ -60,12 +76,26 @@ def vproof_sign(
 
 
 def vproof_verify(public_key: CoseKey, signed_data: bytes):
+    now = int(time.time())
     cose_msg: Sign1Message = CoseMessage.decode(signed_data)
     print("Protected header:", cose_msg.phdr)
     print("Unprotected header:", cose_msg.uhdr)
 
     if not cose_msg.verify_signature(public_key=public_key):
         raise RuntimeError("Bad signature")
+
+    if (iss := cose_msg.phdr.get(PrivateCoseHeaderKeys.ISS.value)) is not None:
+        print("Signatured issued by", iss)
+
+    if (iat := cose_msg.phdr.get(PrivateCoseHeaderKeys.IAT.value)) is not None:
+        print("Signatured issued at", datetime.fromtimestamp(iat))
+
+    if (exp := cose_msg.phdr.get(PrivateCoseHeaderKeys.EXP.value)) is not None:
+        if exp > now:
+            print("Signatured expires at", datetime.fromtimestamp(exp))
+        else:
+            print("Signatured expired at", datetime.fromtimestamp(exp))
+            raise RuntimeError("Signature expired")
 
     decoded_payload = cbor2.loads(cose_msg.payload)
     return decoded_payload
@@ -83,7 +113,20 @@ def main():
         "--key", metavar="filename", help="Private JWK filename", required=True
     )
     parser_sign.add_argument(
+        "--issuer",
+        metavar="issuer",
+        help="Signature issuer",
+        required=False,
+    )
+    parser_sign.add_argument(
         "--kid", metavar="kid", help="Key identifier", required=False
+    )
+    parser_sign.add_argument(
+        "--ttl",
+        metavar="seconds",
+        help="Signature TTL",
+        type=int,
+        required=False,
     )
     parser_sign.add_argument(
         "--input",
@@ -125,6 +168,8 @@ def main():
             private_key=key,
             alg=SIGN_ALG,
             payload=input_data,
+            issuer=args.issuer,
+            ttl=args.ttl,
         )
         compressed_data = zlib.compress(signed_data)
 

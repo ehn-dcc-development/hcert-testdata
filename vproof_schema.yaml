@@ -3,18 +3,8 @@ $schema: http://json-schema.org/schema#
 type: object
 required:
   - sub
-  - iss
-  - exp
   - vac
 properties:
-  iss:
-    description: Issuer
-    type: string
-    format: uri
-  exp:
-    description: Expire
-    type: string
-    format: date-time
   sub:
     description: Subject
     type: object
