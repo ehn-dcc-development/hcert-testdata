@@ -15,6 +15,7 @@ from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
 
 SIGN_ALG = CoseAlgorithms.ES256
+CONTENT_TYPE_CBOR = 60
 
 
 def read_jwk(filename: str, private: bool = True) -> CoseKey:
@@ -46,10 +47,10 @@ def vproof_sign(
 ) -> bytes:
     protected_header = {
         CoseHeaderKeys.ALG: alg.id,
-    }
-    unprotected_header = {
         CoseHeaderKeys.KID: private_key.kid.decode(),
+        CoseHeaderKeys.CONTENT_TYPE: CONTENT_TYPE_CBOR,
     }
+    unprotected_header = {}
     print("Protected header:", protected_header)
     print("Unprotected header:", unprotected_header)
     sign1 = Sign1Message(
