@@ -18,7 +18,7 @@ SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
 
 
-def read_jwk(filename: str, private: bool = True) -> CoseKey:
+def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> CoseKey:
 
     with open(filename, "rt") as jwk_file:
         jwk_dict = json.load(jwk_file)
@@ -30,7 +30,7 @@ def read_jwk(filename: str, private: bool = True) -> CoseKey:
         raise ValueError("Only P-256 supported")
 
     return EC2(
-        kid=jwk_dict["kid"].encode(),
+        kid=(kid or jwk_dict["kid"]).encode(),
         key_ops=KeyOps.SIGN if private else KeyOps.VERIFY,
         alg=SIGN_ALG,
         crv=CoseEllipticCurves.P_256,
@@ -83,6 +83,9 @@ def main():
         "--key", metavar="filename", help="Private JWK filename", required=True
     )
     parser_sign.add_argument(
+        "--kid", metavar="kid", help="Key identifier", required=False
+    )
+    parser_sign.add_argument(
         "--input",
         metavar="filename",
         help="JSON-encoded proof payload",
@@ -115,7 +118,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "sign":
-        key = read_jwk(args.key, private=True)
+        key = read_jwk(args.key, private=True, kid=args.kid)
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
         signed_data = vproof_sign(
