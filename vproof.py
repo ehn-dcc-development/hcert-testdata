@@ -21,7 +21,7 @@ CONTENT_TYPE_CBOR = 60
 CONTENT_TYPE_CWT = 61
 
 
-class CwtHeaderKeys(Enum):
+class CwtClaims(Enum):
     ISS = 1
     SUB = 2
     AUD = 3
@@ -29,7 +29,11 @@ class CwtHeaderKeys(Enum):
     NBF = 5
     IAT = 6
     CTI = 7
-    VPROOF = -65537
+    HEALTHPASS = -65537
+
+
+class HealthpassClaims(Enum):
+    EU_GREENPASS_V1 = 1
 
 
 def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> CoseKey:
@@ -72,10 +76,10 @@ def vproof_sign(
     print("Protected header:", protected_header)
     print("Unprotected header:", unprotected_header)
     payload = {
-        CwtHeaderKeys.ISS.value: issuer,
-        CwtHeaderKeys.IAT.value: now,
-        CwtHeaderKeys.EXP.value: now + ttl,
-        CwtHeaderKeys.VPROOF.value: cbor2.dumps(vproof),
+        CwtClaims.ISS.value: issuer,
+        CwtClaims.IAT.value: now,
+        CwtClaims.EXP.value: now + ttl,
+        CwtClaims.HEALTHPASS.value: {HealthpassClaims.EU_GREENPASS_V1.value: vproof},
     }
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
@@ -94,20 +98,21 @@ def vproof_verify(public_key: CoseKey, signed_data: bytes) -> Dict:
 
     decoded_payload = cbor2.loads(cose_msg.payload)
 
-    if (iss := decoded_payload.get(CwtHeaderKeys.ISS.value)) is not None:
+    if (iss := decoded_payload.get(CwtClaims.ISS.value)) is not None:
         print("Signatured issued by", iss)
 
-    if (iat := decoded_payload.get(CwtHeaderKeys.IAT.value)) is not None:
+    if (iat := decoded_payload.get(CwtClaims.IAT.value)) is not None:
         print("Signatured issued at", datetime.fromtimestamp(iat))
 
-    if (exp := decoded_payload.get(CwtHeaderKeys.EXP.value)) is not None:
+    if (exp := decoded_payload.get(CwtClaims.EXP.value)) is not None:
         if exp > now:
             print("Signatured expires at", datetime.fromtimestamp(exp))
         else:
             print("Signatured expired at", datetime.fromtimestamp(exp))
             raise RuntimeError("Signature expired")
 
-    return cbor2.loads(decoded_payload.get(CwtHeaderKeys.VPROOF.value))
+    healthpass = decoded_payload.get(CwtClaims.HEALTHPASS.value)
+    return healthpass.get(HealthpassClaims.EU_GREENPASS_V1.value)
 
 
 def main():
