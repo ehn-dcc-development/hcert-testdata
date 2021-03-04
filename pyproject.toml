@@ -2,7 +2,7 @@
 profile = "black"
 
 [tool.poetry]
-name = "cosesign"
+name = "vproof"
 version = "0.1.0"
 description = ""
 authors = ["Kirei AB <info@kirei.se>"]
