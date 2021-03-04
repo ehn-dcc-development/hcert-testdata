@@ -27,7 +27,7 @@ test: $(KEYS)
 	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT)
 
 $(PRIVATE_KEY):
-	jwkgen --kty EC --crv P-256  > $@
+	jwkgen --kty EC --crv P-256 --kid $(KID) > $@
 
 $(PUBLIC_KEY): $(PRIVATE_KEY)
 	jq 'del(.d)' < $< >$@
