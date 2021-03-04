@@ -12,9 +12,9 @@ SCHEMA=		$(SCHEMA_YAML) $(SCHEMA_JSON)
 PAYLOAD=	vproof_example.json
 OUTPUT=		test.bin
 
-ISSUER=		"https://folkhalsomyndigheten.se"
+ISSUER=		"se"
 KID=		test2021
-TTL=		3600
+TTL=		7776000 # 90 days
 
 CLEANFILES=	$(OUTPUT) $(SCHEMA_JSON)
 
