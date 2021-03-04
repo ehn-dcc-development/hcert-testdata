@@ -18,12 +18,18 @@ from cryptojwt.utils import b64d
 
 SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
+CONTENT_TYPE_CWT = 61
 
 
-class PrivateCoseHeaderKeys(Enum):
-    EXP = -65537
-    IAT = -65538
-    ISS = -65539
+class CwtHeaderKeys(Enum):
+    ISS = 1
+    SUB = 2
+    AUD = 3
+    EXP = 4
+    NBF = 5
+    IAT = 6
+    CTI = 7
+    VPROOF = -65537
 
 
 def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> CoseKey:
@@ -51,7 +57,7 @@ def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> 
 def vproof_sign(
     private_key: CoseKey,
     alg: CoseAlgorithms,
-    payload: Dict,
+    vproof: Dict,
     issuer: Optional[str] = None,
     ttl: Optional[int] = None,
 ) -> bytes:
@@ -59,23 +65,26 @@ def vproof_sign(
     protected_header = {
         CoseHeaderKeys.ALG: alg.id,
         CoseHeaderKeys.KID: private_key.kid.decode(),
-        CoseHeaderKeys.CONTENT_TYPE: CONTENT_TYPE_CBOR,
-        PrivateCoseHeaderKeys.IAT.value: now,
+        CoseHeaderKeys.CONTENT_TYPE: CONTENT_TYPE_CWT,
     }
-    if ttl:
-        protected_header[PrivateCoseHeaderKeys.EXP.value] = int(now + ttl)
-    if issuer:
-        protected_header[PrivateCoseHeaderKeys.ISS.value] = issuer
-    unprotected_header = {}
+    unprotected_header = {
+        CoseHeaderKeys.KID: private_key.kid.decode(),
+    }
     print("Protected header:", protected_header)
     print("Unprotected header:", unprotected_header)
+    payload = {
+        CwtHeaderKeys.ISS.value: issuer,
+        CwtHeaderKeys.IAT.value: now,
+        CwtHeaderKeys.EXP.value: now + ttl,
+        CwtHeaderKeys.VPROOF.value: cbor2.dumps(vproof),
+    }
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
     )
     return sign1.encode(private_key=private_key)
 
 
-def vproof_verify(public_key: CoseKey, signed_data: bytes):
+def vproof_verify(public_key: CoseKey, signed_data: bytes) -> Dict:
     now = int(time.time())
     cose_msg: Sign1Message = CoseMessage.decode(signed_data)
     print("Protected header:", cose_msg.phdr)
@@ -84,21 +93,22 @@ def vproof_verify(public_key: CoseKey, signed_data: bytes):
     if not cose_msg.verify_signature(public_key=public_key):
         raise RuntimeError("Bad signature")
 
-    if (iss := cose_msg.phdr.get(PrivateCoseHeaderKeys.ISS.value)) is not None:
+    decoded_payload = cbor2.loads(cose_msg.payload)
+
+    if (iss := decoded_payload.get(CwtHeaderKeys.ISS.value)) is not None:
         print("Signatured issued by", iss)
 
-    if (iat := cose_msg.phdr.get(PrivateCoseHeaderKeys.IAT.value)) is not None:
+    if (iat := decoded_payload.get(CwtHeaderKeys.IAT.value)) is not None:
         print("Signatured issued at", datetime.fromtimestamp(iat))
 
-    if (exp := cose_msg.phdr.get(PrivateCoseHeaderKeys.EXP.value)) is not None:
+    if (exp := decoded_payload.get(CwtHeaderKeys.EXP.value)) is not None:
         if exp > now:
             print("Signatured expires at", datetime.fromtimestamp(exp))
         else:
             print("Signatured expired at", datetime.fromtimestamp(exp))
             raise RuntimeError("Signature expired")
 
-    decoded_payload = cbor2.loads(cose_msg.payload)
-    return decoded_payload
+    return cbor2.loads(decoded_payload.get(CwtHeaderKeys.VPROOF.value))
 
 
 def main():
@@ -167,7 +177,7 @@ def main():
         signed_data = vproof_sign(
             private_key=key,
             alg=SIGN_ALG,
-            payload=input_data,
+            vproof=input_data,
             issuer=args.issuer,
             ttl=args.ttl,
         )
