@@ -64,7 +64,6 @@ def vproof_sign(
     now = int(time.time())
     protected_header = {
         CoseHeaderKeys.ALG: alg.id,
-        CoseHeaderKeys.KID: private_key.kid.decode(),
         CoseHeaderKeys.CONTENT_TYPE: CONTENT_TYPE_CWT,
     }
     unprotected_header = {
