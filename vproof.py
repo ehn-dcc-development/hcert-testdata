@@ -32,11 +32,11 @@ class CwtClaims(Enum):
     NBF = 5
     IAT = 6
     CTI = 7
-    HPASS = -65537
+    HCERT = -65537
 
 
-class HealthpassClaims(Enum):
-    EU_GREENPASS_V1 = 1
+class HealthCertificateClaims(Enum):
+    EU_HCERT_V1 = 1
 
 
 def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> CoseKey:
@@ -82,7 +82,7 @@ def vproof_sign(
         CwtClaims.ISS.value: issuer,
         CwtClaims.IAT.value: now,
         CwtClaims.EXP.value: now + ttl,
-        CwtClaims.HPASS.value: {HealthpassClaims.EU_GREENPASS_V1.value: vproof},
+        CwtClaims.HCERT.value: {HealthCertificateClaims.EU_HCERT_V1.value: vproof},
     }
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
@@ -114,8 +114,8 @@ def vproof_verify(public_key: CoseKey, signed_data: bytes) -> Dict:
             print("Signatured expired at", datetime.fromtimestamp(exp))
             raise RuntimeError("Signature expired")
 
-    healthpass = decoded_payload.get(CwtClaims.HPASS.value)
-    return healthpass.get(HealthpassClaims.EU_GREENPASS_V1.value)
+    hcert = decoded_payload.get(CwtClaims.HCERT.value)
+    return hcert.get(HealthCertificateClaims.EU_HCERT_V1.value)
 
 
 def main():
