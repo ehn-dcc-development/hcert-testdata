@@ -61,10 +61,10 @@ def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> 
     )
 
 
-def vproof_sign(
+def sign(
     private_key: CoseKey,
     alg: CoseAlgorithms,
-    vproof: Dict,
+    hcert: Dict,
     issuer: Optional[str] = None,
     ttl: Optional[int] = None,
 ) -> bytes:
@@ -82,7 +82,7 @@ def vproof_sign(
         CwtClaims.ISS.value: issuer,
         CwtClaims.IAT.value: now,
         CwtClaims.EXP.value: now + ttl,
-        CwtClaims.HCERT.value: {HealthCertificateClaims.EU_HCERT_V1.value: vproof},
+        CwtClaims.HCERT.value: {HealthCertificateClaims.EU_HCERT_V1.value: hcert},
     }
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
@@ -90,7 +90,7 @@ def vproof_sign(
     return sign1.encode(private_key=private_key)
 
 
-def vproof_verify(public_key: CoseKey, signed_data: bytes) -> Dict:
+def verify(public_key: CoseKey, signed_data: bytes) -> Dict:
     now = int(time.time())
     cose_msg: Sign1Message = CoseMessage.decode(signed_data)
     print("Protected header:", cose_msg.phdr)
@@ -196,10 +196,10 @@ def main():
         key = read_jwk(args.key, private=True, kid=args.kid)
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
-        signed_data = vproof_sign(
+        signed_data = sign(
             private_key=key,
             alg=SIGN_ALG,
-            vproof=input_data,
+            hcert=input_data,
             issuer=args.issuer,
             ttl=args.ttl,
         )
@@ -243,7 +243,7 @@ def main():
             raise RuntimeError("Invalid encoding")
 
         signed_data = zlib.decompress(compressed_data)
-        payload = vproof_verify(public_key=key, signed_data=signed_data)
+        payload = verify(public_key=key, signed_data=signed_data)
         if args.output:
             with open(args.output, "wt") as output_file:
                 json.dump(payload, output_file, indent=4)
