@@ -10,7 +10,7 @@ This document specifies a data structure and encoding mechanisms for vaccination
 
 Organisations adopting this specification for issuing vaccination passes are called Issuers and organisations accepting vaccination passes as proof of vaccination is called Verifiers. Together, these are called Participants. Some aspects in this document must be coordinated between the Participants, such as the management of a name space and the distribution of cryptographic keys. It is assumed that a party, hereafter referred to as the Coordinator, carries out these tasks. The vaccination pass format of this specification is called the Electronic Vaccination Proof, hereafter referred to as the EVP.
 
-The keywords "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED" and "MAY" should be interpreted as described in (RFC 2119).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED" and "MAY" should be interpreted as described in ([RFC 2119](https://tools.ietf.org/html/rfc2119)).
 
 
 ## Versioning policy
@@ -97,14 +97,14 @@ For the Issuer Signature, one primary and one fallback algorithm is defined. The
 
 This corresponds to the COSE algorithm parameter **ES256**.
 
-- **Fallback Algorithm** The fallback algorithm is RSASSA-PKCS#1 v1.5 as defined in (RFC 3447) with a modulus of 2048 bits in combination with the SHA-256 hash algorithm as defined in (ISO/IEC 10118-3:2004) function 4.
+- **Fallback Algorithm** The fallback algorithm is RSASSA-PKCS#1 v1.5 as defined in [RFC 3447](https://tools.ietf.org/html/rfc3447) with a modulus of 2048 bits in combination with the SHA-256 hash algorithm as defined in (ISO/IEC 10118-3:2004) function 4.
 
 This corresponds to the COSE algorithm parameter: **RS256**
 
 
 ## Data compression
 
-To improve speed and reliability in the reading process of the EVP, the Issuer Signed Payload SHALL be compressed using ZLIB (RFC 1950) and the Deflate compression mechanism in the format defined in (RFC 1951).
+To improve speed and reliability in the reading process of the EVP, the Issuer Signed Payload SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)).
 
 
 # Transport Encodings
