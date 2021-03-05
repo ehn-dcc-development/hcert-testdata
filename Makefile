@@ -1,9 +1,9 @@
 PRIVATE_KEY=	private_key.json
 PUBLIC_KEY=	public_key.json
 
-PAYLOAD_SCHEMA_YAML=	vproof_schema.yaml
-PAYLOAD_SCHEMA_JSON=	vproof_schema.json
-PAYLOAD_EXAMPLE_JSON=	vproof_example.json
+PAYLOAD_SCHEMA_YAML=	hcert_schema.yaml
+PAYLOAD_SCHEMA_JSON=	hcert_schema.json
+PAYLOAD_EXAMPLE_JSON=	hcert_example.json
 
 METADATA_SCHEMA_YAML=	metadata_schema.yaml
 METADATA_SCHEMA_JSON=	metadata_schema.json
@@ -14,7 +14,7 @@ ISSUER=		xyzzy
 KEYS=		$(PRIVATE_KEY) $(PUBLIC_KEY)
 SCHEMA=		$(PAYLOAD_SCHEMA_YAML) $(PAYLOAD_SCHEMA_JSON)
 
-PAYLOAD=	vproof_example.json
+PAYLOAD=	hcert_example.json
 
 OUTPUT_BIN=	test.bin
 OUTPUT_PNG=	test.png
@@ -32,13 +32,13 @@ all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
 	python3 schemacheck.py --input $(PAYLOAD_EXAMPLE_JSON) $(PAYLOAD_SCHEMA_YAML)
-	python3 vproof.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_PNG)
-	python3 vproof.py --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT_BIN) --output $(OUTPUT_TXT)
+	python3 hcert.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_PNG)
+	python3 hcert.py --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT_BIN) --output $(OUTPUT_TXT)
 
 size: $(KEYS)
-	python3 vproof.py --encoding binary sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.bin --aztec size_bin.png
-	python3 vproof.py --encoding base64 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b64 --aztec size_b64.png
-	python3 vproof.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b85 --aztec size_b85.png
+	python3 hcert.py --encoding binary sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.bin --aztec size_bin.png
+	python3 hcert.py --encoding base64 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b64 --aztec size_b64.png
+	python3 hcert.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b85 --aztec size_b85.png
 
 $(PRIVATE_KEY):
 	jwkgen --kty EC --crv P-256 --kid $(KID) > $@

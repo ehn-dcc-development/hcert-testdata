@@ -17,20 +17,22 @@ This repository contains a proposal for encoding and signing proof of vaccinatio
 
 ## Data Format
 
-Vaccination proofs are encoded as CBOR ([RFC7049](https://tools.ietf.org/html/rfc7049)) and signed using COSE ([RFC8152](https://tools.ietf.org/html/rfc8152)), and then compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)).
+The HCERT is represented using CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The HCERT payload is transported in a HCERT claim (value type TBD).
+
+Before transport, the HCERT is compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)).
 
 ## Overview
 
-![overview](vproof_overview.png)
+![overview](hcert_overview.png)
 
 # Presentation
 
-[A short presentation on the background of this initative is available](vproof-preso.pdf)).
+[A short presentation on the background of this initative is available](hcert-preso.pdf)).
 
 
 # Specification
 
-[A draft specification is available](vproof_spec.md).
+[A draft specification is available](hcert_spec.md).
 
 
 # Contributions
