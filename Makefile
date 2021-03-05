@@ -23,8 +23,8 @@ all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
 	python3 schemacheck.py --input vproof_example.json vproof_schema.yaml
-	python3 vproof.py sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT)
-	python3 vproof.py verify --key $(PUBLIC_KEY) --input $(OUTPUT)
+	python3 vproof.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT)
+	python3 vproof.py --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT)
 
 $(PRIVATE_KEY):
 	jwkgen --kty EC --crv P-256 --kid $(KID) > $@

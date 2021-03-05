@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import base64
 import binascii
 import json
 import time
@@ -29,7 +30,7 @@ class CwtClaims(Enum):
     NBF = 5
     IAT = 6
     CTI = 7
-    HEALTHPASS = -65537
+    HPASS = -65537
 
 
 class HealthpassClaims(Enum):
@@ -79,7 +80,7 @@ def vproof_sign(
         CwtClaims.ISS.value: issuer,
         CwtClaims.IAT.value: now,
         CwtClaims.EXP.value: now + ttl,
-        CwtClaims.HEALTHPASS.value: {HealthpassClaims.EU_GREENPASS_V1.value: vproof},
+        CwtClaims.HPASS.value: {HealthpassClaims.EU_GREENPASS_V1.value: vproof},
     }
     sign1 = Sign1Message(
         phdr=protected_header, uhdr=unprotected_header, payload=cbor2.dumps(payload)
@@ -111,7 +112,7 @@ def vproof_verify(public_key: CoseKey, signed_data: bytes) -> Dict:
             print("Signatured expired at", datetime.fromtimestamp(exp))
             raise RuntimeError("Signature expired")
 
-    healthpass = decoded_payload.get(CwtClaims.HEALTHPASS.value)
+    healthpass = decoded_payload.get(CwtClaims.HPASS.value)
     return healthpass.get(HealthpassClaims.EU_GREENPASS_V1.value)
 
 
@@ -119,6 +120,15 @@ def main():
     """ Main function"""
 
     parser = argparse.ArgumentParser(description="Vaccin Proof Signer")
+
+    parser.add_argument(
+        "--encoding",
+        metavar="encoding",
+        help="Transport encoding",
+        choices=["binary", "base64", "base85"],
+        default="base85",
+        required=False,
+    )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -154,7 +164,6 @@ def main():
         help="Compressed CBOR output",
         required=False,
     )
-
     parser_verify = subparsers.add_parser("verify", help="Verify signed proof")
     parser_verify.add_argument(
         "--key", metavar="filename", help="Public JWK filename", required=True
@@ -187,19 +196,40 @@ def main():
         )
         compressed_data = zlib.compress(signed_data)
 
-        print(f"Raw COSE: {len(signed_data)} bytes")
-        print(f"Compressed COSE: {len(compressed_data)} bytes")
+        print(f"Raw CWT: {len(signed_data)} bytes")
+        print(f"Compressed CWT: {len(compressed_data)} bytes")
+
+        if args.encoding == "binary":
+            encoded_data = compressed_data
+        elif args.encoding == "base64":
+            encoded_data = base64.b64encode(compressed_data)
+        elif args.encoding == "base85":
+            encoded_data = base64.b85encode(compressed_data)
+        else:
+            raise RuntimeError("Invalid encoding")
+
+        print(f"Encoded data: {len(encoded_data)} bytes")
 
         if args.output:
             with open(args.output, "wb") as output_file:
-                output_file.write(compressed_data)
+                output_file.write(encoded_data)
         else:
-            print("Output:", binascii.hexlify(compressed_data).decode())
+            print("Output:", binascii.hexlify(encoded_data).decode())
 
     elif args.command == "verify":
         key = read_jwk(args.key, private=False)
         with open(args.input, "rb") as input_file:
-            compressed_data = input_file.read()
+            encoded_data = input_file.read()
+
+        if args.encoding == "binary":
+            compressed_data = encoded_data
+        elif args.encoding == "base64":
+            compressed_data = base64.b64decode(encoded_data)
+        elif args.encoding == "base85":
+            compressed_data = base64.b85decode(encoded_data)
+        else:
+            raise RuntimeError("Invalid encoding")
+
         signed_data = zlib.decompress(compressed_data)
         payload = vproof_verify(public_key=key, signed_data=signed_data)
         if args.output:
