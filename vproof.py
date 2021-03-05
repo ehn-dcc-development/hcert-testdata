@@ -17,6 +17,8 @@ from cose.keys.cosekey import CoseKey, KeyOps
 from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
 
+from aztec_code_generator import AztecCode
+
 SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
 CONTENT_TYPE_CWT = 61
@@ -164,6 +166,13 @@ def main():
         help="Compressed CBOR output",
         required=False,
     )
+    parser_sign.add_argument(
+        "--aztec",
+        metavar="filename",
+        help="Aztec output",
+        required=False,
+    )
+
     parser_verify = subparsers.add_parser("verify", help="Verify signed proof")
     parser_verify.add_argument(
         "--key", metavar="filename", help="Public JWK filename", required=True
@@ -215,6 +224,9 @@ def main():
                 output_file.write(encoded_data)
         else:
             print("Output:", binascii.hexlify(encoded_data).decode())
+
+        if args.aztec:
+            AztecCode(encoded_data).save(args.aztec, 4)
 
     elif args.command == "verify":
         key = read_jwk(args.key, private=False)
