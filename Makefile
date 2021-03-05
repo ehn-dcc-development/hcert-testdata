@@ -1,13 +1,18 @@
 PRIVATE_KEY=	private_key.json
 PUBLIC_KEY=	public_key.json
 
-SCHEMA_YAML=	vproof_schema.yaml
-SCHEMA_JSON=	vproof_schema.json
+PAYLOAD_SCHEMA_YAML=	vproof_schema.yaml
+PAYLOAD_SCHEMA_JSON=	vproof_schema.json
+PAYLOAD_EXAMPLE_JSON=	vproof_example.json
+
+METADATA_SCHEMA_YAML=	metadata_schema.yaml
+METADATA_SCHEMA_JSON=	metadata_schema.json
+METADATA_EXAMPLE_JSON=	metadata_example.json
 
 ISSUER=		xyzzy
 
 KEYS=		$(PRIVATE_KEY) $(PUBLIC_KEY)
-SCHEMA=		$(SCHEMA_YAML) $(SCHEMA_JSON)
+SCHEMA=		$(PAYLOAD_SCHEMA_YAML) $(PAYLOAD_SCHEMA_JSON)
 
 PAYLOAD=	vproof_example.json
 
@@ -19,13 +24,14 @@ ISSUER=		"se"
 KID=		test2021
 TTL=		7776000 # 90 days
 
-CLEANFILES=	$(SCHEMA_JSON) $(OUTPUT_BIN) $(OUTPUT_PNG) $(OUTPUT_TXT) size_*
+CLEANFILES=	$(PAYLOAD_SCHEMA_JSON) $(METADATA_SCHEMA_JSON) \
+		$(OUTPUT_BIN) $(OUTPUT_PNG) $(OUTPUT_TXT) size_*
 
 
 all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
-	python3 schemacheck.py --input vproof_example.json vproof_schema.yaml
+	python3 schemacheck.py --input $(PAYLOAD_EXAMPLE_JSON) $(PAYLOAD_SCHEMA_YAML)
 	python3 vproof.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_PNG)
 	python3 vproof.py --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT_BIN) --output $(OUTPUT_TXT)
 
@@ -40,9 +46,15 @@ $(PRIVATE_KEY):
 $(PUBLIC_KEY): $(PRIVATE_KEY)
 	jq 'del(.d)' < $< >$@
 
-schema: vproof_schema.json
+schema: $(PAYLOAD_SCHEMA_JSON) $(METADATA_SCHEMA_JSON)
 
-$(SCHEMA_JSON): $(SCHEMA_YAML)
+metadata:
+	python3 schemacheck.py --input $(METADATA_EXAMPLE_JSON) $(METADATA_SCHEMA_YAML)
+
+$(PAYLOAD_SCHEMA_JSON): $(PAYLOAD_SCHEMA_YAML)
+	python3 schemacheck.py --json $< >$@
+
+$(METADATA_SCHEMA_JSON): $(METADATA_SCHEMA_YAML)
 	python3 schemacheck.py --json $< >$@
 
 reformat:
