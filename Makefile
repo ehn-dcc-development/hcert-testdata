@@ -10,22 +10,24 @@ KEYS=		$(PRIVATE_KEY) $(PUBLIC_KEY)
 SCHEMA=		$(SCHEMA_YAML) $(SCHEMA_JSON)
 
 PAYLOAD=	vproof_example.json
-OUTPUT=		test.bin
+
+OUTPUT_BIN=	test.bin
 OUTPUT_PNG=	test.png
+OUTPUT_TXT=	test.txt
 
 ISSUER=		"se"
 KID=		test2021
 TTL=		7776000 # 90 days
 
-CLEANFILES=	$(SCHEMA_JSON) $(OUTPUT) $(OUTPUT_PNG) size_*
+CLEANFILES=	$(SCHEMA_JSON) $(OUTPUT_BIN) $(OUTPUT_PNG) $(OUTPUT_TXT) size_*
 
 
 all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
 	python3 schemacheck.py --input vproof_example.json vproof_schema.yaml
-	python3 vproof.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT) --aztec $(OUTPUT_PNG)
-	python3 vproof.py --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT)
+	python3 vproof.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_PNG)
+	python3 vproof.py --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT_BIN) --output $(OUTPUT_TXT)
 
 size: $(KEYS)
 	python3 vproof.py --encoding binary sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.bin --aztec size_bin.png
