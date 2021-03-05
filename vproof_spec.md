@@ -49,7 +49,7 @@ The Issuer Signature is used for integrity protection and data origin authentica
 
 ## Payload
 
-The Payload is a JSON (RFC 7159) object containing the vaccination pass information, encoded and serialised using CBOR as defined in (RFC7049). 
+The EVP is represented using CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The EVP payload is transported in a HEALTHPASS claim (value type TBD).
 
 Strings SHOULD be NFC normalised according to the Unicode standard. Decoding applications SHOULD however be permissive and robust in these aspects, and acceptance of any reasonable type conversion is strongly encouraged. If unnormalised data is found during decoding, or in subsequent comparison function, implementations SHOULD behave as if the input is normalised to NFC.
 
