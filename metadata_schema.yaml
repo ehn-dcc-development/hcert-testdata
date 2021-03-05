@@ -82,7 +82,7 @@ definitions:
       - kty
     properties:
       kty:
-        $ref: '#/definitions/jwa_alg'
+        $ref: '#/definitions/jwa_kty'
   jwa_kty:
     description: JSON Web Key Types (RFC 7518)
     type: string
