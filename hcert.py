@@ -72,12 +72,9 @@ def sign(
     protected_header = {
         CoseHeaderKeys.ALG: alg.id,
         CoseHeaderKeys.CONTENT_TYPE: CONTENT_TYPE_CWT,
-    }
-    unprotected_header = {
-        CoseHeaderKeys.KID: private_key.kid.decode(),
+        CoseHeaderKeys.KID: private_key.kid.decode()
     }
     print("Protected header:", protected_header)
-    print("Unprotected header:", unprotected_header)
     payload = {
         CwtClaims.ISS.value: issuer,
         CwtClaims.IAT.value: now,
