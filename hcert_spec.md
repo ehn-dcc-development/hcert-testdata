@@ -10,10 +10,10 @@ This document specifies a data structure and encoding mechanisms for electronic 
 
 Organisations adopting this specification for issuing health certificates are called Issuers and organisations accepting health certificates as proof of health status is called Verifiers. Together, these are called Participants. Some aspects in this document must be coordinated between the Participants, such as the management of a name space and the distribution of cryptographic keys. It is assumed that a party, hereafter referred to as the Coordinator, carries out these tasks. The health certificate format of this specification is called the Electronic Health Certificate, hereafter referred to as the EHC.
 
-The keywords "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED" and "MAY" should be interpreted as described in (RFC 2119).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED" and "MAY" should be interpreted as described in ([RFC 2119](https://tools.ietf.org/html/rfc2119)).
 
 
-## Versioning policy
+## Versioning Policy
 
 Versions of this specification consist of three different integers describing the *major*, *minor* and *edition* version. 
 
@@ -38,28 +38,23 @@ Ability to read and interpret EHCs issued by any Issuer requires a common data s
 
 ## Structure of the Electronic Health Certificate
 
+The EHC is structured and encoded as a CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The EHC payloads, as defined below,
+is transported in a HPASS claim (value type TBD).
 
-The EHC is structured and encoded as a CBOR Web Token (CWT) as defined RFC 8392, consisting of these four basic parts:
-
-- Issuer Protected Header
-- Electronic Health Certificate Payload information (A set of claims)
-- Issuer Signature
-
-The integrity and authenticity of origin of data contained both within the Payload and the Issuer Protected Header MUST be verifiable by the Verifier. To provide this mechanism, the issuer of the EHC MUST sign the Payload using an asymmetric electronic signature scheme as defined in the COSE specification (RFC 8152). This forms the Issuer Signed Payload.
-
-
-## Issuer Protected Header
-
-### The Issuer Key Identifier Claim
-
-The Issuer Key Identifier (**kid**) Claim is used by Verifiers for selecting the correct public key from a list of keys pertaining to the Issuer specified by the Issuer Identifier (**iid**) Claim. Several keys may be used in parallel by an Issuer for administrative reasons and when performing key rollovers. Key Identifiers are selected by the responsible Issuer and is REQUIRED to be unique per Issuer.
+The integrity and authenticity of origin of EVP data, the CWT MUST be
+verifiable by the Verifier. To provide this mechanism, the issuer of the EHC
+MUST sign the CWT using an asymmetric electronic signature scheme as defined in
+the COSE specification ([RFC 8152](https://tools.ietf.org/html/rfc8152)).
 
 
-### Signing algorithm
+## CWT Claims
 
-The Issuer Protected Header SHALL hold the Algorithm (**alg**) parameter indicating the algorithm used for the creating the signature.
 
-For the Issuer Signature, one primary and one fallback algorithm is defined. The fallback algorithm is only used in the unlikely event the cryptographic strength of the primary algorithm becomes insufficient in providing reliable data integrity protection and origin authentication among the Participants.
+### Signing Algorithm
+
+The Algorithm (**alg**) parameter indicates what algorithm is used for the creating the signature.
+
+One primary and one fallback algorithm is defined. The fallback algorithm is only used in the unlikely event the cryptographic strength of the primary algorithm becomes insufficient in providing reliable data integrity protection and origin authentication among the Participants.
 
 However, it is essential and of utmost importance for the security of the system that all implementations incorporate the fallback algorithm. For this reason, both the primary and the fallback algorithm MUST be implemented.
 
@@ -67,60 +62,35 @@ However, it is essential and of utmost importance for the security of the system
 
 This corresponds to the COSE algorithm parameter **ES256**.
 
-- **Fallback Algorithm** The fallback algorithm is RSASSA-PKCS#1 v1.5 as defined in (RFC 3447) with a modulus of 2048 bits in combination with the SHA-256 hash algorithm as defined in (ISO/IEC 10118-3:2004) function 4.
+- **Fallback Algorithm** The fallback algorithm is RSASSA-PKCS#1 v1.5 as defined in ([RFC 3447](https://tools.ietf.org/html/rfc3447)) with a modulus of 2048 bits in combination with the SHA-256 hash algorithm as defined in (ISO/IEC 10118-3:2004) function 4.
 
 This corresponds to the COSE algorithm parameter: **RS256**
 
+### Key Identifier
 
+The Key Identifier (**kid**) Claim is used by Verifiers for selecting the correct public key from a list of keys pertaining to the Issuer (**iss**) Claim. Several keys may be used in parallel by an Issuer for administrative reasons and when performing key rollovers. Key Identifiers are selected by the responsible Issuer and is REQUIRED to be unique per Issuer.
 
-## Electronic Health Certificate Payload information
+###  Issuer
 
-The Payload consists of a set of claims (in CWT terminology). 
+The Issuer (**iss**) claim is a string value which SHALL hold the identifier of the entity issuing the EHC. The namespace of the Issuer Identifiers MUST be agreed between the Participants, but is not defined in the specification.
+The Claim Key 1 is used to identify this claim.
 
+### Expiration
 
-### The Issuer Identifier Claim
-
-The Issuer (**iis**) claim is a string value which SHALL hold the identifier of the entity issuing the EHC. The namespace of the Issuer Identifiers MUST be agreed between the Participants, but is not defined in the specification. The Claim Key 1 is used to identify this claim.
-
-
-
-
-
-### The Expiration Claim
-
-The Issuer Signature Expiry (**exp**) SHALL hold a timestamp in the NumericDate format (as specified in RFC 8392 section 2) indicating for how long this particular signature over the Payload SHALL be considered valid, after which a Verifier MUST reject the Payload as expired. The purpose of the expiry parameter is to force a limit of the validity period of the EHC. The Claim Key 4 is used to identify this claim.
+The Expiration (**exp**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating for how long this particular signature over the Payload SHALL be considered valid, after which a Verifier MUST reject the Payload as expired. The purpose of the expiry parameter is to force a limit of the validity period of the EHC. The Claim Key 4 is used to identify this claim.
 
 
 ### The Issued at Claim
 
-The Issued at (**iat**) claim SHALL hold a timestamp in the NumericDate format (as specified in RFC 8392 section 2) indicating the time when the EHC was created. Verifiers MAY apply policies with the purpose of restricting the validity of the EVP based on the time of issue. The Claim Key 6 is used to identify this claim.
+The Issued at (**iat**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating the time when the EHC was created. Verifiers MAY apply policies with the purpose of restricting the validity of the EVP based on the time of issue. The Claim Key 6 is used to identify this claim.
 
 
 ### The Health Certificate Claim
 
-The Health Certificate (**hcert**) claim is a JSON (RFC 7159) object containing the health status information, which has been encoded and serialised using CBOR as defined in (RFC 7049). The Claim Key to be used to identify this claim is yet to be determined.
+The Health Certificate (**hcert**) claim is a JSON ([RFC 7159](https://tools.ietf.org/html/rfc7159)) object containing the health status information, which has been encoded and serialised using CBOR as defined in ([RFC 7049](https://tools.ietf.org/html/rfc7049)). The Claim Key to be used to identify this claim is yet to be determined.
 
 Strings in the JSON object SHOULD be NFC normalised according to the Unicode standard. Decoding applications SHOULD however be permissive and robust in these aspects, and acceptance of any reasonable type conversion is strongly encouraged. If unnormalised data is found during decoding, or in subsequent comparison function, implementations SHOULD behave as if the input is normalised to NFC.
 
-
-## Issuer Protected Header
-
-An Issuer Protected Header object that provides the required metadata for the signature SHALL be attached to the Payload as defined by the CWT specification. The Issuer Signature Protected Header SHALL include the following parameters:
-
-- **iid**: Issuer Identifier (bstr)
-- **kid**: Issuer Key identifier (bstr)
-- **exp**: Issuer Signature Expiry (timestamp in ISO 8601 basic format, bstr)
-- **ver**: EHC Specification version (bstr)
-
-The Verifier SHALL validate the Issuer Signature before any further processing of any of the information of the Payload.
-
-(NOTE: In this draft, all but the kid parameter are using private COSE header parameter labels)
-
-
-
-## Data compression
-
-To improve speed and reliability in the reading process of the EHC, the Issuer Signed Payload SHALL be compressed using ZLIB (RFC 1950) and the Deflate compression mechanism in the format defined in (RFC 1951).
 
 
 # Transport Encodings
@@ -136,6 +106,8 @@ If the transfer of the EHC from the Issuer to the holder is based on a presentat
 
 To optically represent the EHC using a compact machine-readable format the Aztec 2D Barcode (ISO/IEC 24778:2008) SHALL be used. 
 When generating the optical code an error correction rate of 23% is RECOMMENDED. The optical code is RECOMMENDED to be rendered on the presentation media with a diagonal size between 35 mm and 65 mm. 
+
+To lower size and to improve speed and reliability in the reading process of the EHC, the CWT SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)). In order to better handle legacy equipment designed to operate on ASCII payloads, the compressed CWT is encoded as ASCII using Base85 before encoded using Aztec.
 
 
 # Security Considerations
@@ -177,7 +149,7 @@ This specification may be used in a way which implies receiving data from untrus
 
 # Appendix A
 
-([hcert_schema](https://raw.githubusercontent.com/kirei/vproof/main/vproof_schema.yaml))
+([hcert_schema](https://raw.githubusercontent.com/kirei/hcert/main/hcert_schema.yaml))
 
 _________________
 
