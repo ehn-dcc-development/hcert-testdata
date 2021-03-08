@@ -70,6 +70,8 @@ This corresponds to the COSE algorithm parameter: **RS256**
 
 The Key Identifier (**kid**) Claim is used by Verifiers for selecting the correct public key from a list of keys pertaining to the Issuer (**iss**) Claim. Several keys may be used in parallel by an Issuer for administrative reasons and when performing key rollovers. Key Identifiers are selected by the responsible Issuer and is REQUIRED to be unique per Issuer.
 
+The Key Identifier is not a security-critical field. For this reason, it MAY also be placed in an unprotected header if required. Verifiers MUST accept both options.
+
 ###  Issuer
 
 The Issuer (**iss**) claim is a string value which SHALL hold the identifier of the entity issuing the EHC. The namespace of the Issuer Identifiers MUST be agreed between the Participants, but is not defined in the specification.
