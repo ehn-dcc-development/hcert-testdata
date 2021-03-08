@@ -27,7 +27,7 @@ Before transport, the hCert is compressed using ZLIB ([RFC1950](https://tools.ie
 
 # Presentation
 
-[A short presentation on the background of this initative is available](hcert-preso.pdf)).
+[A short presentation on the background of this initative is available](hcert-preso.pdf).
 
 
 # Specification
