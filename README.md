@@ -1,8 +1,8 @@
 [![CC BY 4.0][cc-by-shield]][cc-by]
 
-# Vaccination Proof
+# Electronic Health Certificates
 
-This repository contains a proposal for encoding and signing health certificates, as a candidate to be adapted and adopted by eHealth authorities as they seem fit.
+This repository contains a proposal for encoding and signing electronic health certificates, as a candidate to be adapted and adopted by eHealth authorities and other stakeholders as they seem fit.
 
 ## Installation
 
