@@ -2,7 +2,7 @@
 
 # Vaccination Proof
 
-This repository contains a proposal for encoding and signing proof of vaccination, as a candidate to be adapted and adopted by eHealth authorities as they seem fit.
+This repository contains a proposal for encoding and signing health certificates, as a candidate to be adapted and adopted by eHealth authorities as they seem fit.
 
 ## Installation
 
@@ -17,9 +17,9 @@ This repository contains a proposal for encoding and signing proof of vaccinatio
 
 ## Data Format
 
-The HCERT is represented using CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The HCERT payload is transported in a HCERT claim (value type TBD).
+The hCert is represented using CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The hCert payload is transported in a hCert claim (the claim key to be used to identify this claim is yet to be determined).
 
-Before transport, the HCERT is compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)).
+Before transport, the hCert is compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)).
 
 ## Overview
 
