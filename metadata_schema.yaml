@@ -34,7 +34,7 @@ properties:
 
 definitions:
   issuers:
-    description: Health certificate issuers
+    description: Electronic Health Certificate Issuers
     type: object
     required:
       - iss
@@ -54,7 +54,7 @@ definitions:
         items:
           $ref: '#/definitions/jwa_alg'
   types:
-    description: Health certificate types
+    description: Electronic Health Certificate Types
     type: object
     required:
       - description
