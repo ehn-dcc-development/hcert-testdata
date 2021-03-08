@@ -23,8 +23,6 @@ An update of the *minor* version is a feature or maintenance update that maintai
 
 In addition, there is an *edition* version number used for publishing updates to the document itself which have no effect on the EHC, such as correcting spelling, providing clarifications or addressing ambiguities, et cetera. Hence, the edition number is not indicated in the EHC. The version numbers are expressed in the title page of the document using a *major.minor.edition* format, where the three parts are separated by decimal dots. 
 
-In the EHC, The *major* and *minor* versions are indicated in the Issuer Protected Header of the EHC.
-
 
 # Electronic Health Certificate
 
@@ -89,7 +87,7 @@ The Issued at (**iat**) claim SHALL hold a timestamp in the NumericDate format (
 
 ### The Health Certificate Claim
 
-The Health Certificate (**hcert**) claim is a JSON ([RFC 7159](https://tools.ietf.org/html/rfc7159)) object containing the health status information, which has been encoded and serialised using CBOR as defined in ([RFC 7049](https://tools.ietf.org/html/rfc7049)). Several EHCs MAY exist under the same claim, according to the ([metadata schema](https://github.com/kirei/hcert/blob/main/hcert_schema.yaml)).
+The Health Certificate (**hcert**) claim is a JSON ([RFC 7159](https://tools.ietf.org/html/rfc7159)) object containing the health status information, which has been encoded and serialised using CBOR as defined in ([RFC 7049](https://tools.ietf.org/html/rfc7049)). Several EHCs MAY exist under the same claim, according to the ([metadata schema](https://github.com/kirei/hcert/blob/main/metadata_schema.yaml)).
 
 The Claim Key to be used to identify this claim is yet to be determined.
 
