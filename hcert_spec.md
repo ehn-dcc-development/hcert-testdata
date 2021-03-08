@@ -1,4 +1,4 @@
-Electronic Vaccination Proof specification version 0.1.1, 2021-03-08.
+Electronic Health Certificate specification version 0.1.1, 2021-03-08.
 
 
 # Abstract
