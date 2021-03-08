@@ -118,7 +118,7 @@ def verify(public_key: CoseKey, signed_data: bytes) -> Dict:
 def main():
     """ Main function"""
 
-    parser = argparse.ArgumentParser(description="Vaccin Proof Signer")
+    parser = argparse.ArgumentParser(description="Electronic Health Certificate signer")
 
     parser.add_argument(
         "--encoding",
@@ -131,7 +131,7 @@ def main():
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    parser_sign = subparsers.add_parser("sign", help="Sign proof")
+    parser_sign = subparsers.add_parser("sign", help="Sign health cert")
     parser_sign.add_argument(
         "--key", metavar="filename", help="Private JWK filename", required=True
     )
@@ -154,7 +154,7 @@ def main():
     parser_sign.add_argument(
         "--input",
         metavar="filename",
-        help="JSON-encoded proof payload",
+        help="JSON-encoded payload",
         required=True,
     )
     parser_sign.add_argument(
@@ -170,7 +170,7 @@ def main():
         required=False,
     )
 
-    parser_verify = subparsers.add_parser("verify", help="Verify signed proof")
+    parser_verify = subparsers.add_parser("verify", help="Verify signed cert")
     parser_verify.add_argument(
         "--key", metavar="filename", help="Public JWK filename", required=True
     )
@@ -183,7 +183,7 @@ def main():
     parser_verify.add_argument(
         "--output",
         metavar="filename",
-        help="JSON-encoded proof payload",
+        help="JSON-encoded payload",
         required=False,
     )
 
