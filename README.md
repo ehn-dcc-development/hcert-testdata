@@ -4,7 +4,10 @@
 
 This repository contains a proposal for encoding and signing electronic health certificates (EHC), as a candidate to be adapted and adopted by eHealth authorities and other stakeholders as they seem fit.
 
+
 ## Installation
+
+The test code is written in [Python](https://www.python.org/) and can be executed on most Unix/Linux system. [Python Poetry](https://python-poetry.org/) is required and can be installed using `pip3 install poetry`. Once Poetry is installed, the following commands may be used to set up a test environment:
 
     poetry shell
     poetry install
@@ -12,9 +15,12 @@ This repository contains a proposal for encoding and signing electronic health c
 
 ## Test
 
+To run a simple test suite, use the following command:
+
     poetry run make test
 
-A sample output is saved to test.bin (raw EHC) and test.png (Azec).
+Sample output is saved to `test.bin` (raw binary EHC) and `test.png` (Azec). The `test` target will also verify the EHC and write its output to `test.txt`.
+
 
 ## Data Format
 
