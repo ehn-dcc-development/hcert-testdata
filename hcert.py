@@ -188,6 +188,12 @@ def main():
         help="JSON-encoded payload",
         required=False,
     )
+    parser_verify.add_argument(
+        "--decode",
+        metavar="filename",
+        help="Decode data before processing",
+        required=False,
+    )
 
     args = parser.parse_args()
 
@@ -220,9 +226,9 @@ def main():
 
         if args.output:
             with open(args.output, "wb") as output_file:
-                output_file.write(encoded_data)
+                output_file.write(signed_data)
         else:
-            print("Output:", binascii.hexlify(encoded_data).decode())
+            print("Output:", binascii.hexlify(signed_data).decode())
 
         if args.aztec:
             AztecCode(encoded_data).save(args.aztec, 4)
@@ -232,16 +238,19 @@ def main():
         with open(args.input, "rb") as input_file:
             encoded_data = input_file.read()
 
-        if args.encoding == "binary":
-            compressed_data = encoded_data
-        elif args.encoding == "base64":
-            compressed_data = base64.b64decode(encoded_data)
-        elif args.encoding == "base85":
-            compressed_data = base64.b85decode(encoded_data)
+        if args.decode:
+            if args.encoding == "binary":
+                compressed_data = encoded_data
+            elif args.encoding == "base64":
+                compressed_data = base64.b64decode(encoded_data)
+            elif args.encoding == "base85":
+                compressed_data = base64.b85decode(encoded_data)
+            else:
+                raise RuntimeError("Invalid encoding")
+            signed_data = zlib.decompress(compressed_data)
         else:
-            raise RuntimeError("Invalid encoding")
+            signed_data = encoded_data
 
-        signed_data = zlib.decompress(compressed_data)
         payload = verify(public_key=key, signed_data=signed_data)
         if args.output:
             with open(args.output, "wt") as output_file:
