@@ -20,6 +20,7 @@ from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
 
 from aztec_code_generator import AztecCode
+from base45 import base45decode, base45encode
 
 SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
@@ -126,8 +127,8 @@ def main():
         "--encoding",
         metavar="encoding",
         help="Transport encoding",
-        choices=["binary", "base64", "base85"],
-        default="base85",
+        choices=["binary", "base45", "base64", "base85"],
+        default="base45",
         required=False,
     )
 
@@ -221,6 +222,8 @@ def main():
 
         if args.encoding == "binary":
             encoded_data = compressed_data
+        elif args.encoding == "base45":
+            encoded_data = base45encode(compressed_data)
         elif args.encoding == "base64":
             encoded_data = base64.b64encode(compressed_data)
         elif args.encoding == "base85":
@@ -260,6 +263,8 @@ def main():
         if args.decode:
             if args.encoding == "binary":
                 compressed_data = encoded_data
+            elif args.encoding == "base45":
+                compressed_data = base45decode(encoded_data.encode())
             elif args.encoding == "base64":
                 compressed_data = base64.b64decode(encoded_data)
             elif args.encoding == "base85":
