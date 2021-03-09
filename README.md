@@ -2,7 +2,7 @@
 
 # Electronic Health Certificates
 
-This repository contains a proposal for encoding and signing electronic health certificates, as a candidate to be adapted and adopted by eHealth authorities and other stakeholders as they seem fit.
+This repository contains a proposal for encoding and signing electronic health certificates (EHC), as a candidate to be adapted and adopted by eHealth authorities and other stakeholders as they seem fit.
 
 ## Installation
 
@@ -14,12 +14,14 @@ This repository contains a proposal for encoding and signing electronic health c
 
     poetry run make test
 
+A sample output is saved to test.bin (raw EHC) and test.png (Azec).
 
 ## Data Format
 
-The hCert is represented using CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The hCert payload is transported in a hCert claim (the claim key to be used to identify this claim is yet to be determined).
+The EHC is represented using CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The EHC payload is transported in a HPASS claim (claim key TBD) containing a CBOR map (object) of various schemata.
 
-Before transport, the hCert is compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)).
+Before transport as Aztec, the EHC is compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)) and encoded using Base85 (to handle legacy equipment designed to operate on ASCII payloads).
+
 
 ## Overview
 
