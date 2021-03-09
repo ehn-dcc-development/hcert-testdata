@@ -131,7 +131,7 @@ To correctly verify the authenticity of the EHC, a verifier must have a complete
 
 To ease distribution of this metadata, a draft [metadata schema](https://github.com/kirei/hcert/blob/main/metadata_schema.yaml) has been defined.
 
-The metadata is represented as JSON and it is RECOMMENDED that the metadata is signed using JWS ([RFC7515](https://tools.ietf.org/html/rfc7515)) before distribution in order to secure data integrity and data origin authentication. Metadata distribution and signing is to be defined.
+The metadata is represented as JSON and it is RECOMMENDED that the metadata is signed using JWS ([RFC 7515](https://tools.ietf.org/html/rfc7515)) before distribution in order to secure data integrity and data origin authentication. Metadata distribution and signing is to be defined.
 
 
 # Security Considerations
