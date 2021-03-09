@@ -1,8 +1,5 @@
 """Base45 encoding for QR Codes"""
 
-import string
-from typing import Dict
-
 QR_ALPHANUM_CHARSET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"
 PY_ALPHANUM_CHARSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHI"
 
