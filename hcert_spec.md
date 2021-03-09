@@ -37,7 +37,7 @@ Ability to read and interpret EHCs issued by any Issuer requires a common data s
 ## Structure of the Electronic Health Certificate
 
 The EHC is structured and encoded as a CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The EHC payloads, as defined below,
-is transported in a HPASS claim (value type TBD).
+is transported in a HPASS claim (claim key TBD).
 
 The integrity and authenticity of origin of EVP data, the CWT MUST be
 verifiable by the Verifier. To provide this mechanism, the issuer of the EHC
