@@ -11,6 +11,8 @@ from enum import Enum
 from typing import Dict, Optional
 
 import cbor2
+import qrcode
+import qrcode.image.svg
 from cose import EC2, CoseAlgorithms, CoseEllipticCurves, CoseMessage
 from cose.attributes.headers import CoseHeaderKeys
 from cose.keys.cosekey import CoseKey, KeyOps
@@ -83,9 +85,7 @@ def sign(
         CwtClaims.EXP.value: now + ttl,
         CwtClaims.HCERT.value: {HealthCertificateClaims.EU_HCERT_V1.value: hcert},
     }
-    sign1 = Sign1Message(
-        phdr=protected_header, payload=cbor2.dumps(payload)
-    )
+    sign1 = Sign1Message(phdr=protected_header, payload=cbor2.dumps(payload))
     return sign1.encode(private_key=private_key)
 
 
@@ -171,6 +171,12 @@ def main():
         help="Aztec output",
         required=False,
     )
+    parser_sign.add_argument(
+        "--qrcode",
+        metavar="filename",
+        help="QR output",
+        required=False,
+    )
 
     parser_verify = subparsers.add_parser("verify", help="Verify signed cert")
     parser_verify.add_argument(
@@ -232,6 +238,19 @@ def main():
 
         if args.aztec:
             AztecCode(encoded_data).save(args.aztec, 4)
+
+        if args.qrcode:
+            qr = qrcode.QRCode(
+                version=None,
+                error_correction=qrcode.constants.ERROR_CORRECT_Q,
+                box_size=4,
+                border=4,
+            )
+            qr.add_data(encoded_data)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            with open(args.qrcode, "wb") as qr_file:
+                img.save(qr_file)
 
     elif args.command == "verify":
         key = read_jwk(args.key, private=False)
