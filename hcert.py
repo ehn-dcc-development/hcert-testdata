@@ -76,7 +76,7 @@ def sign(
     }
     unprotected_header = {}
     print("Protected header:", protected_header)
-    print("Unprotected header:", protected_header)
+    print("Unprotected header:", unprotected_header)
     payload = {
         CwtClaims.ISS.value: issuer,
         CwtClaims.IAT.value: now,
