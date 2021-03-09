@@ -47,10 +47,23 @@ the COSE specification ([RFC 8152](https://tools.ietf.org/html/rfc8152)).
 
 ## CWT Claims
 
+### Structure Overview
 
-### Signing Algorithm
+- CWT
+  - Protected Header
+    - Signature Algorithm (`alg`, label 1)
+    - Key Identifier (`kid`, label 4)
+  - Payload
+    - Issuer (`iss`, claim key 1)
+    - Issued At (`iat`, claim key 6)
+    - Expiration Time (`exp`, claim key 4)
+    - Health Certificate (`hcert`, claim key TBD)
+      - EU Health Certficate v1 (`eu_hcert_v1`, claim key 1)
+  - Signature
 
-The Algorithm (**alg**) parameter indicates what algorithm is used for the creating the signature.
+### Signature Algorithm
+
+The Signature Algorithm (**alg**) parameter indicates what algorithm is used for the creating the signature.
 
 One primary and one fallback algorithm is defined. The fallback algorithm is only used in the unlikely event the cryptographic strength of the primary algorithm becomes insufficient in providing reliable data integrity protection and origin authentication among the Participants.
 
@@ -75,19 +88,19 @@ The Key Identifier is not a security-critical field. For this reason, it MAY als
 The Issuer (**iss**) claim is a string value which SHALL hold the identifier of the entity issuing the EHC. The namespace of the Issuer Identifiers MUST be agreed between the Participants, but is not defined in the specification.
 The Claim Key 1 is used to identify this claim.
 
-### Expiration
+### Expiration Time
 
-The Expiration (**exp**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating for how long this particular signature over the Payload SHALL be considered valid, after which a Verifier MUST reject the Payload as expired. The purpose of the expiry parameter is to force a limit of the validity period of the EHC. The Claim Key 4 is used to identify this claim.
-
-
-### The Issued at Claim
-
-The Issued at (**iat**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating the time when the EHC was created. Verifiers MAY apply policies with the purpose of restricting the validity of the EVP based on the time of issue. The Claim Key 6 is used to identify this claim.
+The Expiration Time (**exp**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating for how long this particular signature over the Payload SHALL be considered valid, after which a Verifier MUST reject the Payload as expired. The purpose of the expiry parameter is to force a limit of the validity period of the EHC. The Claim Key 4 is used to identify this claim.
 
 
-### The Health Certificate Claim
+### Issued At
 
-The Health Certificate (**hcert**) claim is a JSON ([RFC 7159](https://tools.ietf.org/html/rfc7159)) object containing the health status information, which has been encoded and serialised using CBOR as defined in ([RFC 7049](https://tools.ietf.org/html/rfc7049)). Several EHCs MAY exist under the same claim, according to the ([metadata schema](https://github.com/kirei/hcert/blob/main/metadata_schema.yaml)).
+The Issued At (**iat**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating the time when the EHC was created. Verifiers MAY apply policies with the purpose of restricting the validity of the EVP based on the time of issue. The Claim Key 6 is used to identify this claim.
+
+
+### Health Certificate Claim
+
+The Health Certificate (**hcert**) claim is a JSON ([RFC 7159](https://tools.ietf.org/html/rfc7159)) object containing the health status information, which has been encoded and serialised using CBOR as defined in ([RFC 7049](https://tools.ietf.org/html/rfc7049)). Several EHCs MAY exist under the same claim, according to the [metadata schema](https://github.com/kirei/hcert/blob/main/metadata_schema.yaml).
 
 The Claim Key to be used to identify this claim is yet to be determined.
 
