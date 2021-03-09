@@ -125,6 +125,15 @@ When generating the optical code an error correction rate of 23% is RECOMMENDED.
 To lower size and to improve speed and reliability in the reading process of the EHC, the CWT SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)). In order to better handle legacy equipment designed to operate on ASCII payloads, the compressed CWT is encoded as ASCII using Base85 before encoded using Aztec.
 
 
+# Metadata
+
+To correctly verify the authenticity of the EHC, a verifier must have a complete list of trusted issuers, their key material and used signature algorithms. A verifier must also have a list of all defined EHC payloads and their schemas.
+
+To ease distribution of this metadata, a draft [metadata schema](https://github.com/kirei/hcert/blob/main/metadata_schema.yaml) has been defined.
+
+The metadata is represented as JSON and it is RECOMMENDED that the metadata is signed using JWS ([RFC7515](https://tools.ietf.org/html/rfc7515)) before distribution in order to secure data integrity and data origin authentication. Metadata distribution and signing is to be defined.
+
+
 # Security Considerations
 
 When designing a scheme using this specification, several important security aspects must be considered. These can not preemptively be accounted for in this specification, but must be identified, analysed and monitored by the Participants.
