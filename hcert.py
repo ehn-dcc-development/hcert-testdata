@@ -83,9 +83,7 @@ def sign(
         CwtClaims.EXP.value: now + ttl,
         CwtClaims.HCERT.value: {HealthCertificateClaims.EU_HCERT_V1.value: hcert},
     }
-    sign1 = Sign1Message(
-        phdr=protected_header, payload=cbor2.dumps(payload)
-    )
+    sign1 = Sign1Message(phdr=protected_header, payload=cbor2.dumps(payload))
     return sign1.encode(private_key=private_key)
 
 
