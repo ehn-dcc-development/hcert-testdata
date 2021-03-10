@@ -11,6 +11,9 @@ from enum import Enum
 from typing import Dict, Optional
 
 import cbor2
+import qrcode
+import qrcode.image.pil
+import qrcode.image.svg
 from cose import EC2, CoseAlgorithms, CoseEllipticCurves, CoseMessage
 from cose.attributes.headers import CoseHeaderKeys
 from cose.keys.cosekey import CoseKey, KeyOps
@@ -18,6 +21,7 @@ from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
 
 from aztec_code_generator import AztecCode
+from base45 import base45decode, base45encode
 
 SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
@@ -124,8 +128,8 @@ def main():
         "--encoding",
         metavar="encoding",
         help="Transport encoding",
-        choices=["binary", "base64", "base85"],
-        default="base85",
+        choices=["binary", "base45", "base64", "base85"],
+        default="base45",
         required=False,
     )
 
@@ -167,6 +171,12 @@ def main():
         "--aztec",
         metavar="filename",
         help="Aztec output",
+        required=False,
+    )
+    parser_sign.add_argument(
+        "--qrcode",
+        metavar="filename",
+        help="QR output",
         required=False,
     )
 
@@ -213,6 +223,8 @@ def main():
 
         if args.encoding == "binary":
             encoded_data = compressed_data
+        elif args.encoding == "base45":
+            encoded_data = base45encode(compressed_data)
         elif args.encoding == "base64":
             encoded_data = base64.b64encode(compressed_data)
         elif args.encoding == "base85":
@@ -220,7 +232,7 @@ def main():
         else:
             raise RuntimeError("Invalid encoding")
 
-        print(f"Encoded data: {len(encoded_data)} bytes")
+        print(f"Encoded data: {len(encoded_data)} bytes ({args.encoding})")
 
         if args.output:
             with open(args.output, "wb") as output_file:
@@ -231,6 +243,25 @@ def main():
         if args.aztec:
             AztecCode(encoded_data).save(args.aztec, 4)
 
+        if args.qrcode:
+            qr = qrcode.QRCode(
+                version=None,
+                error_correction=qrcode.constants.ERROR_CORRECT_Q,
+                box_size=4,
+                border=4,
+            )
+            if args.qrcode.endswith(".png"):
+                image_factory = qrcode.image.pil.PilImage
+            elif args.qrcode.endswith(".svg"):
+                image_factory = qrcode.image.svg.SvgImage
+            else:
+                raise ValueError("Unknown QRcode image format")
+            qr.add_data(encoded_data)
+            qr.make(fit=True)
+            img = qr.make_image(image_factory=image_factory)
+            with open(args.qrcode, "wb") as qr_file:
+                img.save(qr_file)
+
     elif args.command == "verify":
         key = read_jwk(args.key, private=False)
         with open(args.input, "rb") as input_file:
@@ -239,6 +270,8 @@ def main():
         if args.decode:
             if args.encoding == "binary":
                 compressed_data = encoded_data
+            elif args.encoding == "base45":
+                compressed_data = base45decode(encoded_data.encode())
             elif args.encoding == "base64":
                 compressed_data = base64.b64decode(encoded_data)
             elif args.encoding == "base85":
