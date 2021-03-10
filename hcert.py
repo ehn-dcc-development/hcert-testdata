@@ -12,6 +12,7 @@ from typing import Dict, Optional
 
 import cbor2
 import qrcode
+import qrcode.image.pil
 import qrcode.image.svg
 from cose import EC2, CoseAlgorithms, CoseEllipticCurves, CoseMessage
 from cose.attributes.headers import CoseHeaderKeys
@@ -231,7 +232,7 @@ def main():
         else:
             raise RuntimeError("Invalid encoding")
 
-        print(f"Encoded data: {len(encoded_data)} bytes")
+        print(f"Encoded data: {len(encoded_data)} bytes ({args.encoding})")
 
         if args.output:
             with open(args.output, "wb") as output_file:
@@ -249,9 +250,15 @@ def main():
                 box_size=4,
                 border=4,
             )
+            if args.qrcode.endswith(".png"):
+                image_factory = qrcode.image.pil.PilImage
+            elif args.qrcode.endswith(".svg"):
+                image_factory = qrcode.image.svg.SvgImage
+            else:
+                raise ValueError("Unknown QRcode image format")
             qr.add_data(encoded_data)
             qr.make(fit=True)
-            img = qr.make_image(fill_color="black", back_color="white")
+            img = qr.make_image(image_factory=image_factory)
             with open(args.qrcode, "wb") as qr_file:
                 img.save(qr_file)
 
