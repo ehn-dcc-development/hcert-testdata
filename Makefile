@@ -44,10 +44,10 @@ size_qztec:
 	python3 hcert.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b85 --aztec size_aztec_b85.png
 
 size_qrcode:
-	python3 hcert.py --encoding binary sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.bin --qr size_qr_bin.png
-	python3 hcert.py --encoding base45 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b45 --qr size_qr_b45.png
-	python3 hcert.py --encoding base64 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b64 --qr size_qr_b64.png
-	python3 hcert.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b85 --qr size_qr_b85.png
+	python3 hcert.py --encoding binary sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.bin --qrcode size_qr_bin.png
+	python3 hcert.py --encoding base45 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b45 --qrcode size_qr_b45.png
+	python3 hcert.py --encoding base64 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b64 --qrcode size_qr_b64.png
+	python3 hcert.py --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output size.b85 --qrcode size_qr_b85.png
 
 $(PRIVATE_KEY):
 	jwkgen --kty EC --crv P-256 --kid $(KID) > $@
