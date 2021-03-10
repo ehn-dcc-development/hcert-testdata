@@ -16,7 +16,7 @@ cbor2 = "^5.2.0"
 cryptojwt = "^1.4.0"
 Pillow = "^8.1.1"
 qrcode = "^6.1"
-base45 = {git = "https://github.com/kirei/python-base45.git", rev = "main"}
+qrbase45 = {git = "https://github.com/kirei/python-qrbase45.git", rev = "main"}
 
 [tool.poetry.dev-dependencies]
 pylama = "^7.7.1"

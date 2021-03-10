@@ -20,9 +20,9 @@ from cose.attributes.headers import CoseHeaderKeys
 from cose.keys.cosekey import CoseKey, KeyOps
 from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
+from qrbase45 import base45decode, base45encode
 
 from aztec_code_generator import AztecCode
-from base45 import base45decode, base45encode
 
 SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
