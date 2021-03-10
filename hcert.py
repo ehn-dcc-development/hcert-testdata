@@ -4,6 +4,7 @@ import argparse
 import base64
 import binascii
 import json
+import logging
 import time
 import zlib
 from datetime import datetime
@@ -26,6 +27,8 @@ from base45 import base45decode, base45encode
 SIGN_ALG = CoseAlgorithms.ES256
 CONTENT_TYPE_CBOR = 60
 CONTENT_TYPE_CWT = 61
+
+logger = logging.getLogger(__name__)
 
 
 class CwtClaims(Enum):
@@ -79,8 +82,8 @@ def sign(
         CoseHeaderKeys.KID: private_key.kid.decode(),
     }
     unprotected_header = {}
-    print("Protected header:", protected_header)
-    print("Unprotected header:", unprotected_header)
+    logger.info("Protected header: %s", protected_header)
+    logger.info("Unprotected header: %s", unprotected_header)
     payload = {
         CwtClaims.ISS.value: issuer,
         CwtClaims.IAT.value: now,
@@ -94,8 +97,8 @@ def sign(
 def verify(public_key: CoseKey, signed_data: bytes) -> Dict:
     now = int(time.time())
     cose_msg: Sign1Message = CoseMessage.decode(signed_data)
-    print("Protected header:", cose_msg.phdr)
-    print("Unprotected header:", cose_msg.uhdr)
+    logger.info("Protected header: %s", cose_msg.phdr)
+    logger.info("Unprotected header: %s", cose_msg.uhdr)
 
     if not cose_msg.verify_signature(public_key=public_key):
         raise RuntimeError("Bad signature")
@@ -103,16 +106,16 @@ def verify(public_key: CoseKey, signed_data: bytes) -> Dict:
     decoded_payload = cbor2.loads(cose_msg.payload)
 
     if (iss := decoded_payload.get(CwtClaims.ISS.value)) is not None:
-        print("Signatured issued by", iss)
+        logger.info("Signatured issued by: %s", iss)
 
     if (iat := decoded_payload.get(CwtClaims.IAT.value)) is not None:
-        print("Signatured issued at", datetime.fromtimestamp(iat))
+        logger.info("Signatured issued at: %s", datetime.fromtimestamp(iat))
 
     if (exp := decoded_payload.get(CwtClaims.EXP.value)) is not None:
         if exp > now:
-            print("Signatured expires at", datetime.fromtimestamp(exp))
+            logger.info("Signatured expires at: %s", datetime.fromtimestamp(exp))
         else:
-            print("Signatured expired at", datetime.fromtimestamp(exp))
+            logger.info("Signatured expired at: %s", datetime.fromtimestamp(exp))
             raise RuntimeError("Signature expired")
 
     hcert = decoded_payload.get(CwtClaims.HCERT.value)
@@ -130,6 +133,12 @@ def main():
         help="Transport encoding",
         choices=["binary", "base45", "base64", "base85"],
         default="base45",
+        required=False,
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Verbose output",
         required=False,
     )
 
@@ -205,6 +214,11 @@ def main():
 
     args = parser.parse_args()
 
+    if args.verbose:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+
     if args.command == "sign":
         key = read_jwk(args.key, private=True, kid=args.kid)
         with open(args.input, "rt") as input_file:
@@ -218,8 +232,8 @@ def main():
         )
         compressed_data = zlib.compress(signed_data)
 
-        print(f"Raw CWT: {len(signed_data)} bytes")
-        print(f"Compressed CWT: {len(compressed_data)} bytes")
+        logger.info("Raw CWT: %d bytes", len(signed_data))
+        logger.info("Compressed CWT: %d bytes", len(compressed_data))
 
         if args.encoding == "binary":
             encoded_data = compressed_data
@@ -232,13 +246,13 @@ def main():
         else:
             raise RuntimeError("Invalid encoding")
 
-        print(f"Encoded data: {len(encoded_data)} bytes ({args.encoding})")
+        logger.info("Encoded data: %d bytes (%s)", len(encoded_data), args.encoding)
 
         if args.output:
             with open(args.output, "wb") as output_file:
                 output_file.write(signed_data)
         else:
-            print("Output:", binascii.hexlify(signed_data).decode())
+            logger.info("Output: %s", binascii.hexlify(signed_data).decode())
 
         if args.aztec:
             AztecCode(encoded_data).save(args.aztec, 4)
@@ -287,7 +301,7 @@ def main():
             with open(args.output, "wt") as output_file:
                 json.dump(payload, output_file, indent=4)
         else:
-            print("Verified payload:", json.dumps(payload, indent=4))
+            logger.info("Verified payload: %s", json.dumps(payload, indent=4))
 
 
 if __name__ == "__main__":
