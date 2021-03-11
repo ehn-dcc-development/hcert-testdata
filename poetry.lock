@@ -45,6 +45,17 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
+name = "aztec-code-generator"
+version = "0.9"
+description = "Aztec Code generator in Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+image = ["pillow (>=3.0,<6.0)", "pillow (>=3.0,<8.0)", "pillow (>=8.0)"]
+
+[[package]]
 name = "babel"
 version = "2.9.0"
 description = "Internationalization utilities"
@@ -661,7 +672,7 @@ pyyaml = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "b6c76d13e6fbde21ce5dfe4df9cd346911ed23e5b2673662c768ace6110e6820"
+content-hash = "3f5d1ba4d3d735d748dc5bb2c428f7f8da0d79514e512a626312851234b28643"
 
 [metadata.files]
 aenum = [
@@ -684,6 +695,10 @@ appdirs = [
 attrs = [
     {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
     {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
+]
+aztec-code-generator = [
+    {file = "aztec_code_generator-0.9-py3-none-any.whl", hash = "sha256:10839fcfa9ebf0013ea90c68a706ece7ace07df6ab943110fca5419cdbc1596f"},
+    {file = "aztec_code_generator-0.9.tar.gz", hash = "sha256:eddfd1c10d2dd39e25defd3c4891cea607d8c6891d19bce0525ba18b83bae34d"},
 ]
 babel = [
     {file = "Babel-2.9.0-py2.py3-none-any.whl", hash = "sha256:9d35c22fcc79893c3ecc85ac4a56cde1ecf3f19c540bba0922308a6c06ca6fa5"},
