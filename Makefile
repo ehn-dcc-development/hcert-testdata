@@ -17,7 +17,8 @@ SCHEMA=		$(PAYLOAD_SCHEMA_YAML) $(PAYLOAD_SCHEMA_JSON)
 PAYLOAD=	hcert_example.json
 
 OUTPUT_BIN=	test.bin
-OUTPUT_PNG=	test.png
+OUTPUT_AZTEC=	test_aztec.png
+OUTPUT_QRCODE=	test_qrcode.png
 OUTPUT_TXT=	test.txt
 
 ISSUER=		"se"
@@ -25,14 +26,14 @@ KID=		test2021
 TTL=		7776000 # 90 days
 
 CLEANFILES=	$(PAYLOAD_SCHEMA_JSON) $(METADATA_SCHEMA_JSON) \
-		$(OUTPUT_BIN) $(OUTPUT_PNG) $(OUTPUT_TXT) size*
+		$(OUTPUT_BIN) $(OUTPUT_AZTEC) $(OUTPUT_QRCODE) $(OUTPUT_TXT) size*
 
 
 all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
 	python3 schemacheck.py --input $(PAYLOAD_EXAMPLE_JSON) $(PAYLOAD_SCHEMA_YAML)
-	python3 hcert.py --verbose --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_PNG)
+	python3 hcert.py --verbose --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_AZTEC) --qrcode $(OUTPUT_QRCODE)
 	python3 hcert.py --verbose --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT_BIN) --output $(OUTPUT_TXT)
 
 size: $(KEYS) size_qztec size_qrcode
