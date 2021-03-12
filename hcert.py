@@ -12,19 +12,22 @@ from enum import Enum
 from typing import Dict, Optional
 
 import cbor2
+import cose.algorithms
+import cose.curves
+import cose.headers
+import cose.keys.keyops
 import qrcode
 import qrcode.image.pil
 import qrcode.image.svg
-from cose import EC2, CoseAlgorithms, CoseEllipticCurves, CoseMessage
-from cose.attributes.headers import CoseHeaderKeys
-from cose.keys.cosekey import CoseKey, KeyOps
+from aztec_code_generator import AztecCode
+from cose.keys.cosekey import CoseKey
+from cose.keys.ec2 import EC2
+from cose.messages import CoseMessage
 from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
 from qrbase45 import base45decode, base45encode
 
-from aztec_code_generator import AztecCode
-
-SIGN_ALG = CoseAlgorithms.ES256
+SIGN_ALG = cose.algorithms.Es256
 CONTENT_TYPE_CBOR = 60
 CONTENT_TYPE_CWT = 61
 
@@ -46,7 +49,7 @@ class HealthCertificateClaims(Enum):
     EU_HCERT_V1 = 1
 
 
-def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> CoseKey:
+def read_jwk(filename: str, private: bool = True) -> CoseKey:
 
     with open(filename, "rt") as jwk_file:
         jwk_dict = json.load(jwk_file)
@@ -57,29 +60,37 @@ def read_jwk(filename: str, private: bool = True, kid: Optional[str] = None) -> 
     if jwk_dict["crv"] != "P-256":
         raise ValueError("Only P-256 supported")
 
-    return EC2(
-        kid=(kid or jwk_dict["kid"]).encode(),
-        key_ops=KeyOps.SIGN if private else KeyOps.VERIFY,
-        alg=SIGN_ALG,
-        crv=CoseEllipticCurves.P_256,
-        x=b64d(jwk_dict["x"].encode()),
-        y=b64d(jwk_dict["y"].encode()),
-        d=b64d(jwk_dict["d"].encode()) if "d" in jwk_dict else None,
-    )
+    if private:
+        key = EC2(
+            crv=cose.curves.P256,
+            x=b64d(jwk_dict["x"].encode()),
+            y=b64d(jwk_dict["y"].encode()),
+            d=b64d(jwk_dict["d"].encode()),
+        )
+        key.key_ops = [cose.keys.keyops.SignOp, cose.keys.keyops.VerifyOp]
+    else:
+        key = EC2(
+            crv=cose.curves.P256,
+            x=b64d(jwk_dict["x"].encode()),
+            y=b64d(jwk_dict["y"].encode()),
+        )
+        key.key_ops = [cose.keys.keyops.VerifyOp]
+    return key
 
 
 def sign(
     private_key: CoseKey,
-    alg: CoseAlgorithms,
+    alg: cose.algorithms.CoseAlgorithm,
     hcert: Dict,
+    kid: str = None,
     issuer: Optional[str] = None,
     ttl: Optional[int] = None,
 ) -> bytes:
     now = int(time.time())
     protected_header = {
-        CoseHeaderKeys.ALG: alg.id,
-        CoseHeaderKeys.CONTENT_TYPE: CONTENT_TYPE_CWT,
-        CoseHeaderKeys.KID: private_key.kid.decode(),
+        cose.headers.Algorithm: alg,
+        cose.headers.ContentType: CONTENT_TYPE_CWT,
+        cose.headers.KID: kid.encode(),
     }
     unprotected_header = {}
     logger.info("Protected header: %s", protected_header)
@@ -90,8 +101,9 @@ def sign(
         CwtClaims.EXP.value: now + ttl,
         CwtClaims.HCERT.value: {HealthCertificateClaims.EU_HCERT_V1.value: hcert},
     }
-    sign1 = Sign1Message(phdr=protected_header, payload=cbor2.dumps(payload))
-    return sign1.encode(private_key=private_key)
+    cose_msg = Sign1Message(phdr=protected_header, payload=cbor2.dumps(payload))
+    cose_msg.key = private_key
+    return cose_msg.encode()
 
 
 def verify(public_key: CoseKey, signed_data: bytes) -> Dict:
@@ -100,7 +112,8 @@ def verify(public_key: CoseKey, signed_data: bytes) -> Dict:
     logger.info("Protected header: %s", cose_msg.phdr)
     logger.info("Unprotected header: %s", cose_msg.uhdr)
 
-    if not cose_msg.verify_signature(public_key=public_key):
+    cose_msg.key = public_key
+    if not cose_msg.verify_signature():
         raise RuntimeError("Bad signature")
 
     decoded_payload = cbor2.loads(cose_msg.payload)
@@ -220,12 +233,13 @@ def main():
         logging.basicConfig(level=logging.WARNING)
 
     if args.command == "sign":
-        key = read_jwk(args.key, private=True, kid=args.kid)
+        key = read_jwk(args.key, private=True)
         with open(args.input, "rt") as input_file:
             input_data = json.load(input_file)
         signed_data = sign(
             private_key=key,
             alg=SIGN_ALG,
+            kid=args.kid,
             hcert=input_data,
             issuer=args.issuer,
             ttl=args.ttl,
