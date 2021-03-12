@@ -26,7 +26,7 @@ Sample output is saved to `test.bin` (raw binary EHC) and `test.png` (Azec). The
 
 The EHC is represented using CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The EHC payload is transported in a **hcert** claim (claim key TBD) containing a CBOR map (object) of various schemata.
 
-Before transport as Aztec, the EHC is compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)) and optionally encoded using Base85 (to handle legacy equipment designed to operate on ASCII payloads).
+Before transport as Aztec, the EHC is compressed using ZLIB ([RFC1950](https://tools.ietf.org/html/rfc1950)) and optionally encoded using Base45 (to handle legacy equipment designed to operate on ASCII payloads).
 
 
 ## Overview
