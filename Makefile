@@ -33,8 +33,8 @@ all: $(KEYS) $(SCHEMA)
 
 test: $(KEYS)
 	python3 schemacheck.py --input $(PAYLOAD_EXAMPLE_JSON) $(PAYLOAD_SCHEMA_YAML)
-	python3 hcert.py --verbose --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_AZTEC) --qrcode $(OUTPUT_QRCODE)
-	python3 hcert.py --verbose --encoding base85 verify --key $(PUBLIC_KEY) --input $(OUTPUT_BIN) --output $(OUTPUT_TXT)
+	python3 hcert.py --verbose --encoding base45 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --kid $(KID) --ttl $(TTL) --input $(PAYLOAD) --output $(OUTPUT_BIN) --aztec $(OUTPUT_AZTEC) --qrcode $(OUTPUT_QRCODE)
+	python3 hcert.py --verbose --encoding base45 verify --key $(PUBLIC_KEY) --input $(OUTPUT_BIN) --output $(OUTPUT_TXT)
 
 size: $(KEYS) size_qztec size_qrcode
 

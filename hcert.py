@@ -11,6 +11,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, Optional
 
+import base45
 import cbor2
 import cose.algorithms
 import cose.curves
@@ -25,7 +26,6 @@ from cose.keys.ec2 import EC2
 from cose.messages import CoseMessage
 from cose.messages.sign1message import Sign1Message
 from cryptojwt.utils import b64d
-from qrbase45 import base45decode, base45encode
 
 SIGN_ALG = cose.algorithms.Es256
 CONTENT_TYPE_CBOR = 60
@@ -252,7 +252,7 @@ def main():
         if args.encoding == "binary":
             encoded_data = compressed_data
         elif args.encoding == "base45":
-            encoded_data = base45encode(compressed_data)
+            encoded_data = base45.b45encode(compressed_data)
         elif args.encoding == "base64":
             encoded_data = base64.b64encode(compressed_data)
         elif args.encoding == "base85":
@@ -299,7 +299,7 @@ def main():
             if args.encoding == "binary":
                 compressed_data = encoded_data
             elif args.encoding == "base45":
-                compressed_data = base45decode(encoded_data.encode())
+                compressed_data = base45.b45decode(encoded_data)
             elif args.encoding == "base64":
                 compressed_data = base64.b64decode(encoded_data)
             elif args.encoding == "base85":
