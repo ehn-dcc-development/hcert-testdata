@@ -2,7 +2,7 @@
 
 # Electronic Health Certificates
 
-This repository contains a proposal for encoding and signing electronic health certificates (EHC), as a candidate to be adapted and adopted by eHealth authorities and other stakeholders as they seem fit.
+This repository contains a proposal for encoding and signing Electronic Health Certificates (EHC), as a candidate to be adapted and adopted by eHealth authorities and other stakeholders as they seem fit.
 
 
 ## Installation
@@ -19,7 +19,7 @@ To run a simple test suite, use the following command:
 
     poetry run make test
 
-Sample output is saved to `test.bin` (raw binary EHC) and `test.png` (Azec). The `test` target will also verify the EHC and write its output to `test.txt`.
+Sample output is saved to `test.bin` (raw binary EHC), `test_aztec.png` (Aztec) and `test_qrcode.png` (QR). The `test` target will also verify the EHC and write its output to `test.txt`.
 
 
 ## Data Format
