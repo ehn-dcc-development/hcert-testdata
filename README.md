@@ -46,6 +46,23 @@ To run a simple test suite, use the following command:
 
 Sample output is saved to `test.bin` (raw binary EHC), `test_aztec.png` (Aztec) and `test_qrcode.png` (QR). The `test` target will also verify the EHC and write its output to `test.txt`.
 
+### Testing with Docker
+
+For testing with Docker on a standard Linux host, the following command sequence may be used:
+
+    docker build -t hcert .
+    docker run -it --rm hcert
+
+### Testing with Fedora Linux
+
+For native testing on a Fedora Linux host, the following command sequence may be used:
+
+    dnf install -y git make jq python3 python3-pip python3-cryptography
+    pip3 install poetry
+    git clone https://github.com/kirei/hcert.git /tmp/hcert
+    cd /tmp/hcert
+    poetry install && poetry run make test
+
 
 ## Data Format
 
