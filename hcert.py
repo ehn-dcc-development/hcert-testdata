@@ -101,7 +101,9 @@ def sign(
         CwtClaims.EXP.value: now + ttl,
         CwtClaims.HCERT.value: {HealthCertificateClaims.EU_HCERT_V1.value: hcert},
     }
-    cose_msg = Sign1Message(phdr=protected_header, payload=cbor2.dumps(payload))
+    payload = cbor2.dumps(payload)
+    logger.info("CBOR-encoded payload: %d bytes", len(payload))
+    cose_msg = Sign1Message(phdr=protected_header, payload=payload)
     cose_msg.key = private_key
     return cose_msg.encode()
 
@@ -235,19 +237,21 @@ def main():
     if args.command == "sign":
         key = read_jwk(args.key, private=True)
         with open(args.input, "rt") as input_file:
-            input_data = json.load(input_file)
+            input_data = input_file.read()
+        logger.info("Input JSON data: %d bytes", len(input_data))
+        hcert_data = json.loads(input_data)
         signed_data = sign(
             private_key=key,
             alg=SIGN_ALG,
             kid=args.kid,
-            hcert=input_data,
+            hcert=hcert_data,
             issuer=args.issuer,
             ttl=args.ttl,
         )
         compressed_data = zlib.compress(signed_data)
 
-        logger.info("Raw CWT: %d bytes", len(signed_data))
-        logger.info("Compressed CWT: %d bytes", len(compressed_data))
+        logger.info("Raw signed CWT: %d bytes", len(signed_data))
+        logger.info("Compressed signed CWT: %d bytes", len(compressed_data))
 
         if args.encoding == "binary":
             encoded_data = compressed_data
