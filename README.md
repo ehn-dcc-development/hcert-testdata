@@ -5,6 +5,31 @@
 This repository contains a proposal for encoding and signing Electronic Health Certificates (EHC), as a candidate to be adapted and adopted by eHealth authorities and other stakeholders as they seem fit.
 
 
+# Requirements and Design Principles
+
+The following requirements and principles has been used when designing the Electronic Health Certificates (EHC):
+
+  1. Electronic Health Certificates shall be carried by the holder and must have the ability to be securely validated off-line (using strong and proven cryptographic primitives).
+
+     *Example: Signed data with machine readable content.*
+
+  2. Use an as compact encoding as practically possible, taking other requirements into consideration, to ensure reliable decoding using optical means.
+
+     *Example: CBOR in combination with deflate compression and Aztec encoding.*
+
+  3. Use existing, proven and modern open standards, with running code available (when possible) for all common platforms and operating environments to limit implementation efforts and minimise risk of interoperability issues.
+
+     *Example: CBOR Web Tokens (CWT).*
+
+  4. When existing standards does not exist, define and test new mechanisms based on existing mechanisms and ensure running code exists.
+
+     *Example: Base45 encoding per new Internet Draft.*
+
+  5. Ensure compatibility with existing systems for optical decoding.
+
+     *Example: Base45 encoding for optical transport.*
+
+
 ## Installation
 
 The test code is written in [Python](https://www.python.org/) and can be executed on most Unix/Linux system. [Python Poetry](https://python-poetry.org/) is required and can be installed using `pip3 install poetry`. Once Poetry is installed, the following commands may be used to set up a test environment:
