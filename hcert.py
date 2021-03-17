@@ -78,6 +78,11 @@ def read_jwk(filename: str, private: bool = True) -> CoseKey:
     return key
 
 
+def json_compact_len(data) -> int:
+    """Return length of JSON compact encoding"""
+    return len(json.dumps(data, indent=None, separators=(",", ":")).encode())
+
+
 def sign(
     private_key: CoseKey,
     alg: cose.algorithms.CoseAlgorithm,
@@ -240,6 +245,7 @@ def main():
             input_data = input_file.read()
         logger.info("Input JSON data: %d bytes", len(input_data))
         hcert_data = json.loads(input_data)
+        logger.info("Compact JSON: %d bytes", json_compact_len(hcert_data))
         signed_data = sign(
             private_key=key,
             alg=SIGN_ALG,
