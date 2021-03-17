@@ -64,14 +64,7 @@ version = "0.1.0"
 description = "Base45 Encoder/Decoder"
 category = "main"
 optional = false
-python-versions = "^3.7"
-develop = false
-
-[package.source]
-type = "git"
-url = "https://github.com/kirei/python-base45.git"
-reference = "main"
-resolved_reference = "3d285a66d31c408f5f4d44acb39dc96cf8e4ac20"
+python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "black"
@@ -676,7 +669,7 @@ brotli = ["brotlipy (>=0.6.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "acc18fc1fcbbaf0a7035026a5e993a6d87d70816e15b7582df09af598c9bd8dd"
+content-hash = "29b4f3dac21fe6b9d2e153140ebed759ecf1b80400829168bb1b5255e503298b"
 
 [metadata.files]
 alabaster = [
@@ -703,7 +696,10 @@ babel = [
     {file = "Babel-2.9.0-py2.py3-none-any.whl", hash = "sha256:9d35c22fcc79893c3ecc85ac4a56cde1ecf3f19c540bba0922308a6c06ca6fa5"},
     {file = "Babel-2.9.0.tar.gz", hash = "sha256:da031ab54472314f210b0adcff1588ee5d1d1d0ba4dbd07b94dba82bde791e05"},
 ]
-base45 = []
+base45 = [
+    {file = "base45-0.1.0-py3-none-any.whl", hash = "sha256:e8237a7986a515c62f450287c38d45b30605a9780f947b85977bf22af846e15a"},
+    {file = "base45-0.1.0.tar.gz", hash = "sha256:f5ff2ac62e5bb7af2176c48a4d12862ac2a4be1638c16464468248542e1f58ca"},
+]
 black = [
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
