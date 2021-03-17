@@ -1,4 +1,4 @@
-Electronic Health Certificate specification version 0.1.1, 2021-03-08.
+Electronic Health Certificate specification version 0.1.2, 2021-03-17.
 
 
 # Abstract
@@ -116,11 +116,11 @@ If the transfer of the EHC from the Issuer to the holder is based on a presentat
 
 ## AZTEC 2D Barcode
 
-To optically represent the EHC using a compact machine-readable format the Aztec 2D Barcode (ISO/IEC 24778:2008) SHALL be used. 
+To optically represent the EHC using a compact machine-readable format the Aztec 2D Barcode (ISO/IEC 24778:2008) SHALL be used.
 
 When generating the optical code an error correction rate of 23% is RECOMMENDED. The optical code is RECOMMENDED to be rendered on the presentation media with a diagonal size between 35 mm and 65 mm. 
 
-To lower size and to improve speed and reliability in the reading process of the EHC, the CWT SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)). In order to better handle legacy equipment designed to operate on ASCII payloads, the compressed CWT is encoded as ASCII using Base85 before encoded using Aztec.
+To lower size and to improve speed and reliability in the reading process of the EHC, the CWT SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)). In order to better handle legacy equipment designed to operate on ASCII payloads, the compressed CWT is encoded as ASCII using [Base85](https://datatracker.ietf.org/doc/draft-faltstrom-base45) before encoded using Aztec.
 
 
 # Metadata
@@ -145,7 +145,7 @@ It is anticipated that EHCs can not be reliably revoked once issued, especially 
 The acceptable validity period would be determined by practical constraints, a traveller may not have the possibility to renew the EHC during a travel overseas. But it may also be that an Issuer of EHC's are considering the possibility of a security compromise of some sort, which requires the Issuer to withdraw an Issuer Key (invalidating all EHCs signed using that key). The consequences of such an event may be limited by regularly rolling Issuer keys and requiring renewal of all EHCs, on some reasonable interval.
 
 
-## Key management
+## Key Management
 
 This specification relies heavily on strong cryptographic mechanisms to secure data integrity and data origin authentication. Maintaining the confidentiality of the private encryption keys are therefor of utmost importance.
 
@@ -163,7 +163,7 @@ The other risks mentioned here are related to the Issuers' operating environment
 However, regardless if an Issuer decides to use HSMs or not, a key roll-over schedule SHOULD be established where the frequency of the key roll-overs is proportionate to the exposure of keys to external networks, other systems and personnel. A well-chosen roll-over schedule also limits the risks associated with erroneously issued EHCs, enabling an Issuer to revoke such EHCs in batches, by withdrawing a key, if required.
 
 
-## Input data validation
+## Input Data Validation
 
 This specification may be used in a way which implies receiving data from untrusted sources into systems which may be of mission-critical nature. To minimise the risks associated with this attack vector, all input fields MUST be properly validated by data types, lengths and contents. The Issuer Signature SHALL also be verified before any processing of the contents of the EHC takes place. However, the validation of the Issuer Signature implies parsing the Protected Issuer Header first, in which a potential attacker may attempt to inject carefully crafted information designed to compromise the security of the system.
 
