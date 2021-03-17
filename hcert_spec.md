@@ -39,10 +39,7 @@ Ability to read and interpret EHCs issued by any Issuer requires a common data s
 The EHC is structured and encoded as a CBOR Web Token (CWT) as defined [RFC 8392](https://tools.ietf.org/html/rfc8392). The EHC payloads, as defined below,
 is transported in a **hcert** claim (claim key TBD).
 
-The integrity and authenticity of origin of EVP data, the CWT MUST be
-verifiable by the Verifier. To provide this mechanism, the issuer of the EHC
-MUST sign the CWT using an asymmetric electronic signature scheme as defined in
-the COSE specification ([RFC 8152](https://tools.ietf.org/html/rfc8152)).
+The integrity and authenticity of origin of EHC data, the CWT MUST be verifiable by the Verifier. To provide this mechanism, the issuer of the EHC MUST sign the CWT using an asymmetric electronic signature scheme as defined in the COSE specification ([RFC 8152](https://tools.ietf.org/html/rfc8152)).
 
 
 ## CWT Claims
@@ -95,7 +92,7 @@ The Expiration Time (**exp**) claim SHALL hold a timestamp in the NumericDate fo
 
 ### Issued At
 
-The Issued At (**iat**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating the time when the EHC was created. Verifiers MAY apply policies with the purpose of restricting the validity of the EVP based on the time of issue. The Claim Key 6 is used to identify this claim.
+The Issued At (**iat**) claim SHALL hold a timestamp in the NumericDate format (as specified in [RFC 8392](https://tools.ietf.org/html/rfc8392) section 2) indicating the time when the EHC was created. Verifiers MAY apply policies with the purpose of restricting the validity of the EHC based on the time of issue. The Claim Key 6 is used to identify this claim.
 
 
 ### Health Certificate Claim
@@ -120,6 +117,7 @@ If the transfer of the EHC from the Issuer to the holder is based on a presentat
 ## AZTEC 2D Barcode
 
 To optically represent the EHC using a compact machine-readable format the Aztec 2D Barcode (ISO/IEC 24778:2008) SHALL be used. 
+
 When generating the optical code an error correction rate of 23% is RECOMMENDED. The optical code is RECOMMENDED to be rendered on the presentation media with a diagonal size between 35 mm and 65 mm. 
 
 To lower size and to improve speed and reliability in the reading process of the EHC, the CWT SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)). In order to better handle legacy equipment designed to operate on ASCII payloads, the compressed CWT is encoded as ASCII using Base85 before encoded using Aztec.
