@@ -25,7 +25,10 @@ from cose.keys.cosekey import CoseKey
 from cose.keys.ec2 import EC2
 from cose.messages import CoseMessage
 from cose.messages.sign1message import Sign1Message
-from cryptojwt.utils import b64d
+from cryptojwt.jwk import JWK
+from cryptojwt.jws.jws import JWS
+from cryptojwt.jwx import key_from_jwk_dict
+from cryptojwt.utils import b64d, b64e
 
 SIGN_ALG = cose.algorithms.Es256
 CONTENT_TYPE_CWT = 61
@@ -50,9 +53,13 @@ class HealthCertificateClaims(Enum):
 
 def read_cosekey(filename: str, private: bool = True) -> CoseKey:
     """Read key and return CoseKey"""
-
     with open(filename, "rt") as jwk_file:
         jwk_dict = json.load(jwk_file)
+    return cosekey_from_jwk_dict(jwk_dict, private)
+
+
+def cosekey_from_jwk_dict(jwk_dict: Dict, private: bool = True) -> CoseKey:
+    """Create CoseKey from JWK dictionary"""
 
     if jwk_dict["kty"] != "EC":
         raise ValueError("Only EC keys supported")
@@ -75,7 +82,16 @@ def read_cosekey(filename: str, private: bool = True) -> CoseKey:
             y=b64d(jwk_dict["y"].encode()),
         )
         key.key_ops = [cose.keys.keyops.VerifyOp]
+    if "kid" in jwk_dict:
+        key.kid = jwk_dict["kid"].encode()
     return key
+
+
+def read_jwk(filename: str, private: bool = True) -> JWK:
+    """Read key and return JWK"""
+    with open(filename, "rt") as jwk_file:
+        jwk_dict = json.load(jwk_file)
+    return key_from_jwk_dict(jwk_dict)
 
 
 def json_compact_dumps(data) -> int:
@@ -130,8 +146,8 @@ def sign_cwt(
         cose.headers.KID: kid.encode(),
     }
     unprotected_header = {}
-    logger.info("Protected header: %s", protected_header)
-    logger.info("Unprotected header: %s", unprotected_header)
+    logger.debug("Protected header: %s", protected_header)
+    logger.debug("Unprotected header: %s", unprotected_header)
 
     now = int(time.time())
     payload = {
@@ -151,12 +167,35 @@ def sign_cwt(
     return cwt
 
 
+def sign_jwt(
+    private_key: JWK,
+    alg: str,
+    hcert: Dict,
+    kid: str = None,
+    issuer: Optional[str] = None,
+    ttl: Optional[int] = None,
+) -> bytes:
+    """Sign HCERT payload and return JWT"""
+    now = int(time.time())
+    payload = {
+        "iss": issuer,
+        "iat": now,
+        "exp": now + ttl,
+        "hcert": hcert,
+    }
+    message = json_compact_dumps(payload)
+    logger.info("JSON payload for JWT: %d bytes", len(message))
+    res = str(JWS(message, alg=alg).sign_compact(keys=[private_key])).encode()
+    logger.info("Raw signed JWT: %d bytes", len(res))
+    return res
+
+
 def verify_cwt(public_key: CoseKey, signed_data: bytes) -> Optional[Dict]:
     """Verify CWT and return HCERT payload"""
 
     cose_msg: Sign1Message = CoseMessage.decode(signed_data)
-    logger.info("Protected header: %s", cose_msg.phdr)
-    logger.info("Unprotected header: %s", cose_msg.uhdr)
+    logger.debug("Protected header: %s", cose_msg.phdr)
+    logger.debug("Unprotected header: %s", cose_msg.uhdr)
 
     cose_msg.key = public_key
     if not cose_msg.verify_signature():
@@ -217,6 +256,26 @@ def command_sign(args: argparse.Namespace):
     logger.info(
         "Encoded compressed CWT: %d bytes (%s)",
         len(encoded_compressed_cwt),
+        args.encoding,
+    )
+
+    # sign with JWS for comparison
+    jwk = read_jwk(args.key, private=True)
+    signed_data_jwt = sign_jwt(
+        private_key=jwk,
+        alg="ES256",
+        kid=args.kid,
+        hcert=hcert_data,
+        issuer=args.issuer,
+        ttl=args.ttl,
+    )
+
+    compressed_jwt = zlib.compress(signed_data_jwt)
+    logger.info("Compressed JWT: %d bytes", len(compressed_jwt))
+    encoded_compressed_jwt = encode_data(compressed_jwt, args.encoding)
+    logger.info(
+        "Encoded compressed JWT: %d bytes (%s)",
+        len(encoded_compressed_jwt),
         args.encoding,
     )
 
