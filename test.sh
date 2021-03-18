@@ -1,7 +1,6 @@
 #!/bin/sh
 
 ISSUER=issuer
-KID=test2021
 TTL=7776000
 
 PRIVATE_KEY=private_key.json
@@ -17,7 +16,7 @@ for payload in hcert_example_minimal.json hcert_example_typical.json hcert_examp
 
 	python3 hcert.py --verbose --encoding base45 sign \
 		--key $PRIVATE_KEY  \
-		--issuer $ISSUER --kid $KID --ttl $TTL \
+		--issuer $ISSUER --ttl $TTL \
 		--input $payload --output $output_bin \
 		--aztec $output_aztec --qrcode $output_qr
 

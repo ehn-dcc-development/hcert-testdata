@@ -28,7 +28,7 @@ from cose.messages.sign1message import Sign1Message
 from cryptojwt.jwk import JWK
 from cryptojwt.jws.jws import JWS
 from cryptojwt.jwx import key_from_jwk_dict
-from cryptojwt.utils import b64d, b64e
+from cryptojwt.utils import b64d
 
 SIGN_ALG = cose.algorithms.Es256
 CONTENT_TYPE_CWT = 61
@@ -134,7 +134,6 @@ def sign_cwt(
     private_key: CoseKey,
     alg: cose.algorithms.CoseAlgorithm,
     hcert: Dict,
-    kid: str = None,
     issuer: Optional[str] = None,
     ttl: Optional[int] = None,
 ) -> bytes:
@@ -143,7 +142,7 @@ def sign_cwt(
     protected_header = {
         cose.headers.Algorithm: alg,
         cose.headers.ContentType: CONTENT_TYPE_CWT,
-        cose.headers.KID: kid.encode(),
+        cose.headers.KID: private_key.kid,
     }
     unprotected_header = {}
     logger.debug("Protected header: %s", protected_header)
@@ -171,7 +170,6 @@ def sign_jwt(
     private_key: JWK,
     alg: str,
     hcert: Dict,
-    kid: str = None,
     issuer: Optional[str] = None,
     ttl: Optional[int] = None,
 ) -> bytes:
@@ -243,7 +241,6 @@ def command_sign(args: argparse.Namespace):
     cwt = sign_cwt(
         private_key=key,
         alg=SIGN_ALG,
-        kid=args.kid,
         hcert=hcert_data,
         issuer=args.issuer,
         ttl=args.ttl,
@@ -264,7 +261,6 @@ def command_sign(args: argparse.Namespace):
     signed_data_jwt = sign_jwt(
         private_key=jwk,
         alg="ES256",
-        kid=args.kid,
         hcert=hcert_data,
         issuer=args.issuer,
         ttl=args.ttl,
@@ -361,9 +357,6 @@ def main():
         metavar="issuer",
         help="Signature issuer",
         required=False,
-    )
-    parser_sign.add_argument(
-        "--kid", metavar="kid", help="Key identifier", required=False
     )
     parser_sign.add_argument(
         "--ttl",
