@@ -1,0 +1,36 @@
+{
+	"sub": {
+		"n": "Gary West",
+		"id": [
+			{
+				"t": "pin",
+				"i": "U1234567A"
+			},
+			{
+				"t": "pas",
+				"i": "P9876543E"
+			}
+		],
+		"dob": "1985-03-02"
+	},
+	"vac": [
+		{
+			"des": "COVID-19 mRNA vaccine",
+			"nam": "Comirnaty",
+			"aut": "Pfizer BioNTech",
+			"seq": 1,
+			"tot": 2,
+			"dat": "2021-02-01",
+			"adm": "RIVM"
+		},
+		{
+			"des": "COVID-19 mRNA vaccine",
+			"nam": "Comirnaty",
+			"aut": "Pfizer BioNTech",
+			"seq": 2,
+			"tot": 2,
+			"dat": "2021-03-01",
+			"adm": "RIVM"
+		}
+	]
+}
