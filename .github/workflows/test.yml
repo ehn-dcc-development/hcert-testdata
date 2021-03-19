@@ -35,3 +35,6 @@ jobs:
     - name: Test
       run: |
         poetry run pytest -v --black --isort
+    - name: Sign and verify
+      run: |
+        poetry run make test size
