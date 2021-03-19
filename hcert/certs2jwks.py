@@ -29,11 +29,11 @@ def pem_to_jwk_dict(pem_data: str):
     jwk_dict = jwk.serialize()
     jwk_dict["kid"] = b64e(b64d(jwk.thumbprint("SHA-256"))[:KID_SIZE]).decode()
     cert = x509.load_pem_x509_certificate(pem_data.encode(), default_backend())
-    jwk_dict["x509"] = {
+    jwk_dict["x5t#S256"] = b64e(cert.fingerprint(hashes.SHA256())).decode()
+    jwk_dict["x5attrs"] = {
         "subject": cert.subject.rfc4514_string(),
         "issuer": cert.issuer.rfc4514_string(),
         "serial": cert.serial_number,
-        "fingerprint": b64e(cert.fingerprint(hashes.SHA256())).decode(),
     }
     return jwk_dict
 
