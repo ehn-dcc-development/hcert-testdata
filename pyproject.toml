@@ -33,3 +33,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 hcert = "hcert.cli:main"
+certs2jwks = "hcert.certs2jwks:main"
