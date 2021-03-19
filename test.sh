@@ -15,7 +15,7 @@ for payload in hcert_example_minimal.json hcert_example_typical.json hcert_examp
 	output_qr="${prefix}_qr.png"
 
 	echo "Signing ${payload}"
-	python3 hcert.py --verbose --encoding base45 sign \
+	hcert --verbose --encoding base45 sign \
 		--key $PRIVATE_KEY  \
 		--issuer $ISSUER --ttl $TTL \
 		--input $payload --output $output_bin \
@@ -23,7 +23,7 @@ for payload in hcert_example_minimal.json hcert_example_typical.json hcert_examp
 	echo ""
 
 	echo "Verify ${payload}"
-	python3 hcert.py --verbose --encoding base45 verify \
+	hcert --verbose --encoding base45 verify \
 		--key $PUBLIC_KEY \
 		--input $output_bin --output $output_txt
 	echo ""
