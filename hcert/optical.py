@@ -4,6 +4,7 @@ import zlib
 import qrcode
 import qrcode.image.pil
 import qrcode.image.svg
+import qrcode.util
 from aztec_code_generator import AztecCode
 
 from .utils import encode_data
@@ -43,7 +44,8 @@ def save_qrcode(payload: bytes, filename: str, encoding: str = "base45") -> None
         image_factory = qrcode.image.svg.SvgImage
     else:
         raise ValueError("Unknown QRcode image format")
-    qr.add_data(qr_data)
+    qr.add_data(qr_data, optimize=0)
+    assert qr.data_list[0].mode == qrcode.util.MODE_ALPHA_NUM
     qr.make(fit=True)
     img = qr.make_image(image_factory=image_factory)
     with open(filename, "wb") as qr_file:
