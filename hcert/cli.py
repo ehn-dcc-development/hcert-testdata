@@ -9,6 +9,7 @@ from enum import Enum
 from typing import Dict, Optional
 
 import cose.algorithms
+from cryptojwt.utils import b64d, b64e
 
 from .cwt import CWT, CwtClaims, read_cosekey
 from .jwt import read_jwk, sign_jwt
@@ -31,6 +32,8 @@ def command_sign(args: argparse.Namespace):
     """Create signed EHC"""
 
     private_key = read_cosekey(args.key, private=True)
+    if args.kid:
+        private_key.kid = b64d(args.kid.encode())
 
     with open(args.input, "rt") as input_file:
         input_data = input_file.read()
@@ -84,6 +87,9 @@ def command_verify(args: argparse.Namespace):
 
     public_key = read_cosekey(args.key, private=False)
 
+    if args.kid:
+        public_key.kid = b64d(args.kid.encode())
+
     with open(args.input, "rb") as input_file:
         encoded_data = input_file.read()
 
@@ -99,7 +105,7 @@ def command_verify(args: argparse.Namespace):
     if (iss := cwt.claims.get(CwtClaims.ISS.value)) is not None:
         logger.info("Signatured issued by: %s", iss)
 
-    logger.info("Signature verified by: %s", cwt.key.kid.decode())
+    logger.info("Signature verified by: %s", b64e(cwt.key.kid).decode())
 
     if (iat := cwt.claims.get(CwtClaims.IAT.value)) is not None:
         logger.info("Signatured issued at: %s", datetime.fromtimestamp(iat))
@@ -180,6 +186,12 @@ def main():
         required=False,
     )
     parser_sign.add_argument(
+        "--kid",
+        metavar="id",
+        help="Key identifier (base64url encoded)",
+        required=False,
+    )
+    parser_sign.add_argument(
         "--aztec",
         metavar="filename",
         help="Aztec output",
@@ -213,6 +225,12 @@ def main():
         "--decode",
         metavar="filename",
         help="Decode data before processing",
+        required=False,
+    )
+    parser_verify.add_argument(
+        "--kid",
+        metavar="id",
+        help="Key identifier (base64url encoded)",
         required=False,
     )
 
