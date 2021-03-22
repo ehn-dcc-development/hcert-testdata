@@ -1,6 +1,7 @@
 #!/bin/sh
 
-ISSUER=issuer
+ISSUER=xx
+KID=7Ma02Zk3w6Y
 TTL=7776000
 
 PRIVATE_KEY=private_key.json
@@ -17,14 +18,14 @@ for payload in hcert_example_minimal.json hcert_example_typical.json hcert_examp
 	echo "Signing ${payload}"
 	hcert --verbose --encoding base45 sign \
 		--key $PRIVATE_KEY  \
-		--issuer $ISSUER --ttl $TTL \
+		--issuer $ISSUER --kid $KID --ttl $TTL \
 		--input $payload --output $output_bin \
 		--aztec $output_aztec --qrcode $output_qr
 	echo ""
 
 	echo "Verify ${payload}"
 	hcert --verbose --encoding base45 verify \
-		--key $PUBLIC_KEY \
+		--key $PUBLIC_KEY --kid $KID \
 		--input $output_bin --output $output_txt
 	echo ""
 done

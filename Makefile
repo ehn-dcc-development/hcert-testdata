@@ -9,7 +9,8 @@ METADATA_SCHEMA_YAML=	metadata_schema.yaml
 METADATA_SCHEMA_JSON=	metadata_schema.json
 METADATA_EXAMPLE_JSON=	metadata_example.json
 
-ISSUER=		xyzzy
+ISSUER=		XX
+KID=		7Ma02Zk3w6Y
 
 KEYS=		$(PRIVATE_KEY) $(PUBLIC_KEY)
 SCHEMA=		$(PAYLOAD_SCHEMA_YAML) $(PAYLOAD_SCHEMA_JSON)
