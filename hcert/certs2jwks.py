@@ -19,7 +19,7 @@ from cryptojwt.utils import b64d, b64e
 START_DELIMITER = "-----BEGIN CERTIFICATE-----"
 END_DELIMITER = "-----END CERTIFICATE-----"
 
-KID_SIZE = 16
+KID_SIZE = 8
 
 
 def pem_to_jwk_dict(pem_data: str):
