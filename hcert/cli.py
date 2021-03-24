@@ -12,11 +12,8 @@ import cose.algorithms
 from cryptojwt.utils import b64d, b64e
 
 from .cwt import CWT, CwtClaims, read_cosekey
-from .jwt import read_jwk, sign_jwt
 from .optical import save_aztec, save_qrcode
 from .utils import decode_data, encode_data, json_compact_len
-
-DO_SIGN_JWT = True
 
 SIGN_ALG = cose.algorithms.Es256
 HCERT_CLAIM = -65537
@@ -49,25 +46,6 @@ def command_sign(args: argparse.Namespace):
     cwt = CWT.from_dict(claims=claims, issuer=args.issuer, ttl=args.ttl)
     cwt_bytes = cwt.sign(private_key=private_key, alg=SIGN_ALG)
     logger.info("Raw signed CWT: %d bytes", len(cwt_bytes))
-
-    # sign with JWS for comparison
-    if DO_SIGN_JWT:
-        jwk = read_jwk(args.key, private=True)
-        signed_data_jwt = sign_jwt(
-            private_key=jwk,
-            alg="ES256",
-            hcert={"eu_hcert_v1": eu_hcert_v1},
-            issuer=args.issuer,
-            ttl=args.ttl,
-        )
-        compressed_jwt = zlib.compress(signed_data_jwt)
-        logger.info("Compressed JWT: %d bytes", len(compressed_jwt))
-        encoded_compressed_jwt = encode_data(compressed_jwt, args.encoding)
-        logger.info(
-            "Encoded compressed JWT: %d bytes (%s)",
-            len(encoded_compressed_jwt),
-            args.encoding,
-        )
 
     if args.output:
         with open(args.output, "wb") as output_file:
