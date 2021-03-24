@@ -3,17 +3,16 @@ import binascii
 import json
 import logging
 import time
-import zlib
+import sys
 from datetime import datetime
 from enum import Enum
-from typing import Dict, Optional
 
 import cose.algorithms
 from cryptojwt.utils import b64d, b64e
 
 from .cwt import CWT, CwtClaims, read_cosekey
 from .optical import save_aztec, save_qrcode
-from .utils import decode_data, encode_data, json_compact_len
+from .utils import json_compact_len
 
 SIGN_ALG = cose.algorithms.Es256
 HCERT_CLAIM = -65537
@@ -69,13 +68,7 @@ def command_verify(args: argparse.Namespace):
         public_key.kid = b64d(args.kid.encode())
 
     with open(args.input, "rb") as input_file:
-        encoded_data = input_file.read()
-
-    if args.decode:
-        compressed_data = decode_data(encoded_data, args.encoding)
-        signed_data = zlib.decompress(compressed_data)
-    else:
-        signed_data = encoded_data
+        signed_data = input_file.read()
 
     now = int(time.time())
     cwt = CWT.from_bytes(signed_data=signed_data, public_keys=[public_key])
@@ -197,12 +190,6 @@ def main():
         "--output",
         metavar="filename",
         help="JSON-encoded payload",
-        required=False,
-    )
-    parser_verify.add_argument(
-        "--decode",
-        metavar="filename",
-        help="Decode data before processing",
         required=False,
     )
     parser_verify.add_argument(
