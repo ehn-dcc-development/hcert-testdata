@@ -14,7 +14,7 @@ from cryptojwt.jwk.rsa import RSAKey
 from cryptojwt.jwk.x509 import import_public_key_from_pem_data
 from cryptojwt.jws.jws import JWS
 from cryptojwt.jwx import key_from_jwk_dict
-from cryptojwt.utils import b64d, b64e
+from cryptojwt.utils import b64e
 
 START_DELIMITER = "-----BEGIN CERTIFICATE-----"
 END_DELIMITER = "-----END CERTIFICATE-----"
