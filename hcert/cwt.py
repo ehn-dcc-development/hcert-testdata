@@ -12,6 +12,11 @@ from cose.keys.cosekey import CoseKey
 from cose.keys.ec2 import EC2
 from cose.messages import CoseMessage
 from cose.messages.sign1message import Sign1Message
+from cryptojwt.jwk.ec import ECKey
+from cryptojwt.jwk.x509 import (
+    import_private_key_from_pem_file,
+    import_public_key_from_cert_file,
+)
 from cryptojwt.utils import b64d
 
 
@@ -31,8 +36,23 @@ class CwtClaims(Enum):
 
 def read_cosekey(filename: str, private: bool = True) -> CoseKey:
     """Read key and return CoseKey"""
-    with open(filename, "rt") as jwk_file:
-        jwk_dict = json.load(jwk_file)
+    if filename.endswith(".json"):
+        with open(filename, "rt") as jwk_file:
+            jwk_dict = json.load(jwk_file)
+    elif filename.endswith(".key"):
+        key = import_private_key_from_pem_file(filename)
+        jwk = ECKey()
+        jwk.load_key(key)
+        jwk_dict = jwk.serialize(private=private)
+    elif filename.endswith(".crt"):
+        if private:
+            raise ValueError("No private keys in certificates")
+        key = import_public_key_from_cert_file(filename)
+        jwk = ECKey()
+        jwk.load_key(key)
+        jwk_dict = jwk.serialize(private=private)
+    else:
+        raise ValueError("Unknown key format")
     return cosekey_from_jwk_dict(jwk_dict, private)
 
 
