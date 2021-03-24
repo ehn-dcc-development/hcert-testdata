@@ -2,8 +2,8 @@ import argparse
 import binascii
 import json
 import logging
-import time
 import sys
+import time
 from datetime import datetime
 from enum import Enum
 
