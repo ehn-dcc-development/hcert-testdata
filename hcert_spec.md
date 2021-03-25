@@ -120,7 +120,7 @@ To optically represent the EHC using a compact machine-readable format the Aztec
 
 When generating the optical code an error correction rate of 23% is RECOMMENDED. The optical code is RECOMMENDED to be rendered on the presentation media with a diagonal size between 35 mm and 65 mm. 
 
-To lower size and to improve speed and reliability in the reading process of the EHC, the CWT SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)). In order to better handle legacy equipment designed to operate on ASCII payloads, the compressed CWT is encoded as ASCII using [Base85](https://datatracker.ietf.org/doc/draft-faltstrom-base45) before encoded using Aztec.
+To lower size and to improve speed and reliability in the reading process of the EHC, the CWT SHALL be compressed using ZLIB ([RFC 1950](https://tools.ietf.org/html/rfc1950)) and the Deflate compression mechanism in the format defined in ([RFC 1951](https://tools.ietf.org/html/rfc1951)). In order to better handle legacy equipment designed to operate on ASCII payloads, the compressed CWT is encoded as ASCII using [Base45](https://datatracker.ietf.org/doc/draft-faltstrom-base45) before encoded using Aztec.
 
 
 # Metadata
