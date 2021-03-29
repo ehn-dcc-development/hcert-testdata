@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ISSUER=xx
+ISSUER=XX
 KID=7Ma02Zk3w6Y
 TTL=7776000
 

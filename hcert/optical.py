@@ -12,9 +12,9 @@ from .utils import encode_data
 logger = logging.getLogger(__name__)
 
 
-def compress_and_encode(data: bytes, encoding: str = "base45") -> bytes:
+def compress_and_encode(data: bytes, encoding: str = "base45") -> str:
     compressed_data = zlib.compress(data)
-    encoded_compressed_data = encode_data(compressed_data, encoding)
+    encoded_compressed_data = "HC1" + encode_data(compressed_data, encoding)
     logger.debug("Compressed data: %d bytes", len(compressed_data))
     logger.debug("Encoded compressed data: %d bytes", len(encoded_compressed_data))
     return encoded_compressed_data

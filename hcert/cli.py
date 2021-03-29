@@ -134,7 +134,7 @@ def main():
     parser_sign.add_argument(
         "--issuer",
         metavar="issuer",
-        help="Signature issuer",
+        help="Signature issuer (ISO 3166 country code)",
         required=False,
     )
     parser_sign.add_argument(

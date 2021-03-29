@@ -12,6 +12,7 @@ TEST_KEY_KID=	$(shell python3 cert2kid.py < issuer1.crt)
 TEST_PAYLOAD=	../hcert_example_typical.json
 TEST_TTL=	31536000
 TEST_OUTPUT=	test1
+TEST_ISSUER=	XX
 
 
 all: certs sign verify
@@ -21,6 +22,7 @@ certs:
 
 sign: $(JWKS_PRIVATE) $(JWKS_SIGNED)
 	hcert --verbose sign \
+		--issuer $(TEST_ISSUER) \
 		--key $(TEST_KEY_FILE) \
 		--kid $(TEST_KEY_KID) --ttl $(TEST_TTL) \
 		--input $(TEST_PAYLOAD) \
