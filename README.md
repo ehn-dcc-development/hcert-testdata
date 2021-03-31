@@ -1,5 +1,3 @@
-[![CC BY 4.0][cc-by-shield]][cc-by]
-
 # Electronic Health Certificates Test
 
 This repository contains a test implementation for Electronic Health Certificates. The [specification](https://github.com/DIGGSweden/hcert) has been moved to [DIGGSweden](https://github.com/DIGGSweden).
