@@ -1,6 +1,6 @@
 # Electronic Health Certificates Test
 
-This repository contains a test implementation for Electronic Health Certificates. The [specification](https://github.com/DIGGSweden/hcert) has been moved to [DIGGSweden](https://github.com/DIGGSweden).
+This repository contains a test implementation for Electronic Health Certificates. The [specification](https://github.com/ehn-digital-green-development/hcert-spec) has been moved to [European eHealth network](https://github.com/ehn-digital-green-development).
 
 
 ## Installation
