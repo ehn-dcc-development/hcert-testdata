@@ -45,10 +45,7 @@ size_qztec:
 	hcert --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --aztec size_aztec_b85.png
 
 size_qrcode:
-	hcert --encoding binary sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --qrcode size_qr_bin.png
 	hcert --encoding base45 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --qrcode size_qr_b45.png
-	hcert --encoding base64 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --qrcode size_qr_b64.png
-	hcert --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --qrcode size_qr_b85.png
 
 $(PRIVATE_KEY):
 	jwkgen --kty EC --crv P-256 --kid $(KID) > $@
