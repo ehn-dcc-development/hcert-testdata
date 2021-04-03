@@ -15,7 +15,7 @@ cbor2 = "^5.2.0"
 cryptojwt = "^1.4.0"
 Pillow = "^8.1.1"
 qrcode = "^6.1"
-base45 = "^0.1.0"
+base45 = "^0.2.0"
 aztec_code_generator = "^0.9"
 PyYAML = "^5.4.1"
 
