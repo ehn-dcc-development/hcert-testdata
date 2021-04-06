@@ -3,11 +3,6 @@ PUBLIC_KEY=	public_key.json
 
 PAYLOAD_SCHEMA_YAML=	hcert_schema.yaml
 PAYLOAD_SCHEMA_JSON=	hcert_schema.json
-PAYLOAD_EXAMPLE_JSON=	hcert_example.json
-
-METADATA_SCHEMA_YAML=	metadata_schema.yaml
-METADATA_SCHEMA_JSON=	metadata_schema.json
-METADATA_EXAMPLE_JSON=	metadata_example.json
 
 ISSUER=		XX
 KID=		7Ma02Zk3w6Y
@@ -22,7 +17,6 @@ KID=		test2021
 TTL=		7776000 # 90 days
 
 CLEANFILES=	$(PAYLOAD_SCHEMA_JSON) $(PAYLOAD_SCHEMA_YAML) \
-		$(METADATA_SCHEMA_JSON) \
 		hcert_example_*.{bin,txt,png} \
 		size_*.{bin,txt,png}
 
@@ -54,18 +48,10 @@ $(PRIVATE_KEY):
 $(PUBLIC_KEY): $(PRIVATE_KEY)
 	jq 'del(.d)' < $< >$@
 
-schema: $(PAYLOAD_SCHEMA_JSON) $(METADATA_SCHEMA_JSON)
-
-metadata:
-	python3 schemacheck.py --input $(METADATA_EXAMPLE_JSON) $(METADATA_SCHEMA_YAML)
-
 $(PAYLOAD_SCHEMA_YAML):
 	curl -o $@ https://raw.githubusercontent.com/ehn-digital-green-development/hcert-schema/main/eu_hcert_v1_schema.yaml
 
 $(PAYLOAD_SCHEMA_JSON): $(PAYLOAD_SCHEMA_YAML)
-	python3 schemacheck.py --json $< >$@
-
-$(METADATA_SCHEMA_JSON): $(METADATA_SCHEMA_YAML)
 	python3 schemacheck.py --json $< >$@
 
 reformat:
