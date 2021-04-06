@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def compress_and_encode(data: bytes, encoding: str = "base45") -> bytes:
-    compressed_data = zlib.compress(data)
+    compressed_data = zlib.compress(data, level=zlib.Z_BEST_COMPRESSION)
     encoded_data = encode_data(compressed_data, encoding)
     encoded_compressed_data = "HC1".encode() + encoded_data
     logger.debug("Compressed data: %d bytes", len(compressed_data))
