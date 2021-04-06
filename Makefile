@@ -21,7 +21,8 @@ ISSUER=		issuer
 KID=		test2021
 TTL=		7776000 # 90 days
 
-CLEANFILES=	$(PAYLOAD_SCHEMA_JSON) $(METADATA_SCHEMA_JSON) \
+CLEANFILES=	$(PAYLOAD_SCHEMA_JSON) $(PAYLOAD_SCHEMA_YAML) \
+		$(METADATA_SCHEMA_JSON) \
 		hcert_example_*.{bin,txt,png} \
 		size_*.{bin,txt,png}
 
@@ -57,6 +58,9 @@ schema: $(PAYLOAD_SCHEMA_JSON) $(METADATA_SCHEMA_JSON)
 
 metadata:
 	python3 schemacheck.py --input $(METADATA_EXAMPLE_JSON) $(METADATA_SCHEMA_YAML)
+
+$(PAYLOAD_SCHEMA_YAML):
+	curl -o $@ https://raw.githubusercontent.com/ehn-digital-green-development/hcert-schema/main/eu_hcert_v1_schema.yaml
 
 $(PAYLOAD_SCHEMA_JSON): $(PAYLOAD_SCHEMA_YAML)
 	python3 schemacheck.py --json $< >$@
