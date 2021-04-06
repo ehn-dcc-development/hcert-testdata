@@ -29,7 +29,7 @@ CLEANFILES=	$(PAYLOAD_SCHEMA_JSON) $(PAYLOAD_SCHEMA_YAML) \
 
 all: $(KEYS) $(SCHEMA)
 
-verify:
+verify: $(PAYLOAD_SCHEMA_YAML)
 	python3 schemacheck.py --input hcert_example_minimal.json $(PAYLOAD_SCHEMA_YAML)
 	python3 schemacheck.py --input hcert_example_typical.json $(PAYLOAD_SCHEMA_YAML)
 	python3 schemacheck.py --input hcert_example_large.json   $(PAYLOAD_SCHEMA_YAML)
