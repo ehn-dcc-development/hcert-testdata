@@ -2,8 +2,6 @@
 $schema: http://json-schema.org/schema#
 
 type: object
-required:
-  - sub
 properties:
   sub:
     description: Subject
@@ -190,8 +188,11 @@ properties:
           example: SE
 anyOf:
   - required:
+    - sub
     - vac
   - required:
+    - sub
     - tst
   - required:
+    - sub
     - rec
