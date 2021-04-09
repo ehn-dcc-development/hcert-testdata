@@ -123,6 +123,12 @@ def main():
         help="Verbose output",
         required=False,
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Debug output",
+        required=False,
+    )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -201,7 +207,9 @@ def main():
 
     args = parser.parse_args()
 
-    if args.verbose:
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
+    elif args.verbose:
         logging.basicConfig(level=logging.INFO)
     else:
         logging.basicConfig(level=logging.WARNING)
