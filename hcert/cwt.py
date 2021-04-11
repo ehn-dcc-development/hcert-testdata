@@ -133,7 +133,6 @@ class CWT(object):
         verified_key = None
 
         for key in public_keys:
-            print(key)
             if key.kid == kid:
                 cose_msg.key = key
                 if cose_msg.verify_signature():
