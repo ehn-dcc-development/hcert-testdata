@@ -8,7 +8,7 @@ import qrcode.image.svg
 import qrcode.util
 from aztec_code_generator import AztecCode
 
-from .utils import encode_data
+from .utils import decode_data, encode_data
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,11 @@ def compress_and_encode(data: bytes, encoding: str = "base45") -> bytes:
     compressed_data = zlib.compress(data, level=zlib.Z_BEST_COMPRESSION)
     encoded_data = encode_data(compressed_data, encoding)
     encoded_compressed_data = "HC1".encode() + encoded_data
+    logger.debug(
+        "Uncompressed data: %d bytes, %s",
+        len(data),
+        binascii.hexlify(data).decode(),
+    )
     logger.debug(
         "Compressed data: %d bytes, %s",
         len(compressed_data),
@@ -27,7 +32,19 @@ def compress_and_encode(data: bytes, encoding: str = "base45") -> bytes:
         len(encoded_compressed_data),
         binascii.hexlify(encoded_compressed_data).decode(),
     )
+    print(encoded_compressed_data)
     return encoded_compressed_data
+
+
+def decode_and_decompress(data: bytes, encoding: str = "base45") -> bytes:
+    decoded_data = decode_data(data, encoding)
+    decompressed_data = zlib.decompress(decoded_data)
+    logger.debug(
+        "Uncompressed data: %d bytes, %s",
+        len(decompressed_data),
+        binascii.hexlify(decompressed_data).decode(),
+    )
+    return decompressed_data
 
 
 def save_aztec(payload: bytes, filename: str, encoding: str = "base45") -> None:
