@@ -3,7 +3,7 @@ profile = "black"
 
 [tool.poetry]
 name = "hcert"
-version = "0.2.1"
+version = "0.2.2"
 description = "Electronic Health Certificate (EHC) proof of concept"
 authors = ["Kirei AB <info@kirei.se>"]
 
