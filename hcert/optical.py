@@ -48,6 +48,7 @@ def save_qrcode(payload: bytes, filename: str) -> None:
     """Save CWT as QR Code"""
     logger.info("Encoding %d bytes for QR", len(payload))
     qr_data = compress_and_encode(payload)
+    logger.info("QR data: %s", qr_data)
     qr = qrcode.QRCode(
         version=None,
         error_correction=qrcode.constants.ERROR_CORRECT_Q,
