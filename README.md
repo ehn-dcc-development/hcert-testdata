@@ -17,7 +17,7 @@ To run a simple test suite, use the following command:
 
     poetry run make test
 
-Sample output is saved to `test.bin` (raw binary EHC), `test_aztec.png` (Aztec) and `test_qrcode.png` (QR). The `test` target will also verify the EHC and write its output to `test.txt`.
+Sample output is saved to `test.bin` (raw binary EHC), `test.png` (QR). The `test` target will also verify the EHC and write its output to `test.txt`.
 
 ### Testing with Docker
 

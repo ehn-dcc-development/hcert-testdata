@@ -11,7 +11,7 @@ import cose.algorithms
 from cryptojwt.utils import b64d, b64e
 
 from .cwt import CWT, CwtClaims, read_cosekey
-from .optical import save_aztec, save_qrcode
+from .optical import save_qrcode
 from .utils import json_compact_len
 
 SIGN_ALG = cose.algorithms.Es256
@@ -52,11 +52,8 @@ def command_sign(args: argparse.Namespace):
     else:
         logger.info("Output: %s", binascii.hexlify(cwt_bytes).decode())
 
-    if args.aztec:
-        save_aztec(cwt_bytes, args.aztec, args.encoding)
-
     if args.qrcode:
-        save_qrcode(cwt_bytes, args.qrcode, args.encoding)
+        save_qrcode(cwt_bytes, args.qrcode)
 
 
 def command_verify(args: argparse.Namespace):
@@ -110,14 +107,6 @@ def main():
     )
 
     parser.add_argument(
-        "--encoding",
-        metavar="encoding",
-        help="Transport encoding",
-        choices=["binary", "base45", "base64", "base85"],
-        default="base45",
-        required=False,
-    )
-    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Verbose output",
@@ -166,12 +155,6 @@ def main():
         "--kid",
         metavar="id",
         help="Key identifier (base64url encoded)",
-        required=False,
-    )
-    parser_sign.add_argument(
-        "--aztec",
-        metavar="filename",
-        help="Aztec output",
         required=False,
     )
     parser_sign.add_argument(

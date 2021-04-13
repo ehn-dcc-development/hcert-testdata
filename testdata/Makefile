@@ -27,8 +27,7 @@ sign: $(JWKS_PRIVATE) $(JWKS_SIGNED)
 		--kid $(TEST_KEY_KID) --ttl $(TEST_TTL) \
 		--input $(TEST_PAYLOAD) \
 		--output $(TEST_OUTPUT).bin \
-		--aztec $(TEST_OUTPUT)_aztec.png \
-		--qrcode $(TEST_OUTPUT)_qt.png \
+		--qrcode $(TEST_OUTPUT).png \
 
 verify:
 	hcert --verbose verify \

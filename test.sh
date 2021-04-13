@@ -12,19 +12,18 @@ for payload in hcert_example_minimal.json hcert_example_typical.json hcert_examp
 
 	output_txt="${prefix}.txt"
 	output_bin="${prefix}.bin"
-	output_aztec="${prefix}_aztec.png"
-	output_qr="${prefix}_qr.png"
+	output_png="${prefix}.png"
 
 	echo "Signing ${payload}"
-	hcert --verbose --encoding base45 sign \
+	hcert --verbose sign \
 		--key $PRIVATE_KEY  \
 		--issuer $ISSUER --kid $KID --ttl $TTL \
 		--input $payload --output $output_bin \
-		--aztec $output_aztec --qrcode $output_qr
+		--qrcode $output_png
 	echo ""
 
 	echo "Verify ${payload}"
-	hcert --verbose --encoding base45 verify \
+	hcert --verbose verify \
 		--key $PUBLIC_KEY --kid $KID \
 		--input $output_bin --output $output_txt
 	echo ""

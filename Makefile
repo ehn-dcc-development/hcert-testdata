@@ -31,17 +31,6 @@ verify: $(PAYLOAD_SCHEMA_YAML)
 test: $(KEYS) verify
 	sh test.sh
 
-size: $(KEYS) size_qztec size_qrcode
-
-size_qztec:
-	hcert --encoding binary sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --aztec size_aztec_bin.png
-	hcert --encoding base45 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --aztec size_aztec_b45.png
-	hcert --encoding base64 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --aztec size_aztec_b64.png
-	hcert --encoding base85 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --aztec size_aztec_b85.png
-
-size_qrcode:
-	hcert --encoding base45 sign --key $(PRIVATE_KEY) --issuer $(ISSUER) --ttl $(TTL) --input $(PAYLOAD) --qrcode size_qr_b45.png
-
 $(PRIVATE_KEY):
 	jwkgen --kty EC --crv P-256 --kid $(KID) > $@
 
@@ -55,8 +44,8 @@ $(PAYLOAD_SCHEMA_JSON): $(PAYLOAD_SCHEMA_YAML)
 	python3 schemacheck.py --json $< >$@
 
 reformat:
-	isort *.py
-	black *.py
+	isort hcert *.py
+	black hcert *.py
 
 clean:
 	rm -f $(PRIVATE_KEY) $(PUBLIC_KEY) $(CLEANFILES)
