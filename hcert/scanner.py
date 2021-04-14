@@ -26,6 +26,7 @@ class AccessIsAtr110(SerialScanner):
     def __init__(self, port: str, baudrate: Optional[int] = None) -> None:
         super().__init__(port, baudrate)
         self.send_modify_command("AISRDS", 1)
+        self.send_modify_command("ALLENA", 1)
 
     def send_command(self, command: str) -> bytes:
         """Send command to scanner, return any resulting data"""
