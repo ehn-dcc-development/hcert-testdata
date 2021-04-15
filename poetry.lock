@@ -225,6 +225,31 @@ gmpy = ["gmpy"]
 gmpy2 = ["gmpy2"]
 
 [[package]]
+name = "hcert"
+version = "0.0.0"
+description = "Electronic Health Certificate (HCERT)"
+category = "main"
+optional = false
+python-versions = "^3.9"
+develop = false
+
+[package.dependencies]
+base45 = "^0.2.0"
+cbor2 = "^5.2.0"
+cose = "0.9.dev3"
+cryptojwt = "^1.4.0"
+jsonschema = "^3.2.0"
+Pillow = "^8.1.1"
+PyYAML = "^5.4.1"
+qrcode = "^6.1"
+
+[package.source]
+type = "git"
+url = "https://github.com/ehn-digital-green-development/python-hcert"
+reference = "main"
+resolved_reference = "471d771ab1bf1c98fed3e04721997c73b0e9fefc"
+
+[[package]]
 name = "idna"
 version = "2.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -749,7 +774,7 @@ brotli = ["brotlipy (>=0.6.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "c8283c5de0fd31198299f00e55fa38606b25006c78c1eee2128f4dc6bc1f9352"
+content-hash = "48a27f0c03d9698ee13636b802b7d0fc44519a48cfd9d49d2dd3b149c617b7c3"
 
 [metadata.files]
 alabaster = [
@@ -875,6 +900,7 @@ ecdsa = [
     {file = "ecdsa-0.16.1-py2.py3-none-any.whl", hash = "sha256:881fa5e12bb992972d3d1b3d4dfbe149ab76a89f13da02daa5ea1ec7dea6e747"},
     {file = "ecdsa-0.16.1.tar.gz", hash = "sha256:cfc046a2ddd425adbd1a78b3c46f0d1325c657811c0f45ecc3a0a6236c1e50ff"},
 ]
+hcert = []
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},

@@ -36,7 +36,7 @@ verify:
 		--input $(TEST_OUTPUT).bin
 
 verify_jwks:
-	python3 jws_verify.py --trusted $(JWKS_PUBLIC) --input $(JWKS_SIGNED)
+	python3 ../tools/jws_verify.py --trusted $(JWKS_PUBLIC) --input $(JWKS_SIGNED)
 
 $(JWKS_PRIVATE):
 	jwkgen --kty EC > $@
@@ -45,10 +45,10 @@ $(JWKS_PUBLIC): $(JWKS_PRIVATE)
 	jq 'del(.d)' < $< >$@
 
 $(JWKS_SIGNED): $(JWKS_PRIVATE) $(CERTS)
-	cat issuer*.crt | certs2jwks --sign $(JWKS_PRIVATE) > $@
+	cat issuer*.crt | python3 ../tools/certs2jwks.py --sign $(JWKS_PRIVATE) > $@
 
 $(JWKS): $(JWKS_SIGNED)
-	python3 jws_verify.py --trusted $(JWKS_PUBLIC) --input $< --output $@
+	python3 ../tools/jws_verify.py --trusted $(JWKS_PUBLIC) --input $< --output $@
 
 clean:
 	rm -f $(JWS) $(JWKS) $(TEST_OUTPUT)*
