@@ -32,6 +32,6 @@ For native testing on a Fedora Linux host, the following command sequence may be
 
     dnf install -y git make jq python3 python3-pip python3-cryptography
     pip3 install poetry
-    git clone https://github.com/kirei/hcert.git /tmp/hcert
+    git clone https://github.com/ehn-digital-green-development/hcert-testdata /tmp/hcert
     cd /tmp/hcert
     poetry install && poetry run make test

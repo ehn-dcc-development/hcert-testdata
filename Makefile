@@ -24,9 +24,9 @@ CLEANFILES=	$(PAYLOAD_SCHEMA_JSON) $(PAYLOAD_SCHEMA_YAML) \
 all: $(KEYS) $(SCHEMA)
 
 verify: $(PAYLOAD_SCHEMA_YAML)
-	python3 schemacheck.py --input hcert_example_minimal.json $(PAYLOAD_SCHEMA_YAML)
-	python3 schemacheck.py --input hcert_example_typical.json $(PAYLOAD_SCHEMA_YAML)
-	python3 schemacheck.py --input hcert_example_large.json   $(PAYLOAD_SCHEMA_YAML)
+	python3 tools/schemacheck.py --input hcert_example_minimal.json $(PAYLOAD_SCHEMA_YAML)
+	python3 tools/schemacheck.py --input hcert_example_typical.json $(PAYLOAD_SCHEMA_YAML)
+	python3 tools/schemacheck.py --input hcert_example_large.json   $(PAYLOAD_SCHEMA_YAML)
 
 test: $(KEYS) verify
 	sh test.sh
@@ -41,7 +41,7 @@ $(PAYLOAD_SCHEMA_YAML):
 	curl -o $@ https://raw.githubusercontent.com/ehn-digital-green-development/hcert-schema/main/eu_hcert_v1_schema.yaml
 
 $(PAYLOAD_SCHEMA_JSON): $(PAYLOAD_SCHEMA_YAML)
-	python3 schemacheck.py --json $< >$@
+	python3 tools/schemacheck.py --json $< >$@
 
 reformat:
 	isort hcert *.py
