@@ -226,7 +226,7 @@ gmpy2 = ["gmpy2"]
 
 [[package]]
 name = "hcert"
-version = "0.0.0"
+version = "0.1.0"
 description = "Electronic Health Certificate (HCERT)"
 category = "main"
 optional = false
@@ -247,7 +247,7 @@ qrcode = "^6.1"
 type = "git"
 url = "https://github.com/ehn-digital-green-development/python-hcert"
 reference = "main"
-resolved_reference = "471d771ab1bf1c98fed3e04721997c73b0e9fefc"
+resolved_reference = "936a50b95de49069ffecab7b3baf231354ced9dd"
 
 [[package]]
 name = "idna"
