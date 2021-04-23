@@ -7,7 +7,7 @@ TTL=7776000
 PRIVATE_KEY=private_key.json
 PUBLIC_KEY=public_key.json
 
-for payload in hcert_example_minimal.json hcert_example_typical.json hcert_example_large.json; do
+for payload in example-*.json; do
 	prefix=`basename $payload .json`
 
 	output_txt="${prefix}.txt"
