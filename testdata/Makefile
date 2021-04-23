@@ -1,3 +1,5 @@
+TEST_SOURCE=	https://raw.githubusercontent.com/ehn-digital-green-development/ehn-dgc-schema/next/examples/vac.json
+
 CERTS=		issuer1.crt issuer2.crt issuer3.crt issuer4.crt
 KEYS=		issuer1.key issuer2.key issuer3.key issuer4.key
 
@@ -9,7 +11,7 @@ JWKS_PUBLIC=	jwks_signer_public.json
 TEST_KEY_FILE=	issuer1.key
 TEST_CRT_FILE=	issuer1.crt
 TEST_KEY_KID=	$(shell python3 cert2kid.py < issuer1.crt)
-TEST_PAYLOAD=	../hcert_example_typical.json
+TEST_PAYLOAD=	test1.json
 TEST_TTL=	31536000
 TEST_OUTPUT=	test1
 TEST_ISSUER=	XX
@@ -21,6 +23,7 @@ certs:
 	bash mkcert.sh
 
 sign: $(JWKS_PRIVATE) $(JWKS_SIGNED)
+	curl -o $(TEST_PAYLOAD) $(TEST_SOURCE)
 	hcert --verbose sign \
 		--issuer $(TEST_ISSUER) \
 		--key $(TEST_KEY_FILE) \
